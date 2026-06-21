@@ -1,9 +1,11 @@
 #!/bin/bash
 # ============================================================
-#   BantouMind AI - Webhook + Tunnel Launcher
+#   BantouMind AI - Webhook + Cloudflare Tunnel Launcher
 #   Lance le serveur webhook et le tunnel HTTPS public
 #   Usage : bash start-webhook.sh
 # ============================================================
+
+set -e
 
 echo ""
 echo "╔══════════════════════════════════════════╗"
@@ -11,29 +13,56 @@ echo "║   🚀 BANTOUMIND WEBHOOK LAUNCHER         ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 
-# Lancer le serveur webhook
 cd "$(dirname "$0")"
-echo "📡 Démarrage du serveur webhook..."
-node webhook-server.js &
-WEBHOOK_PID=$!
-sleep 2
 
-# Vérifier que le serveur tourne
-if curl -s -o /dev/null -w "" http://localhost:3000/ 2>/dev/null; then
-    echo "✅ Serveur webhook actif sur http://localhost:3000"
+# Nettoyer les processus en sortant
+cleanup() {
+    echo ""
+    echo "🛑 Arrêt du serveur webhook..."
+    kill $WEBHOOK_PID 2>/dev/null || true
+    echo "✅ Arrêté"
+}
+trap cleanup EXIT INT TERM
+
+# Vérifier/installer cloudflared
+if ! command -v cloudflared &> /dev/null; then
+    if [ -f "./cloudflared" ]; then
+        echo "✅ cloudflared trouvé localement"
+        CLOUDFLARED="./cloudflared"
+    else
+        echo "📥 Téléchargement de cloudflared..."
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            curl -L -o cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-darwin-amd64
+        else
+            curl -L -o cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+        fi
+        chmod +x cloudflared
+        CLOUDFLARED="./cloudflared"
+        echo "✅ cloudflared téléchargé"
+    fi
 else
-    echo "❌ Erreur : le serveur webhook n'a pas démarré"
-    exit 1
+    CLOUDFLARED="cloudflared"
+    echo "✅ cloudflared trouvé dans le PATH"
+fi
+
+# Vérifier que le serveur webhook n'est pas déjà lancé
+echo "🔍 Vérification du serveur webhook..."
+if curl -sf http://localhost:3000/ > /dev/null 2>&1; then
+    echo "✅ Serveur webhook déjà actif sur http://localhost:3000"
+else
+    echo "📡 Démarrage du serveur webhook..."
+    node webhook-server.js &
+    WEBHOOK_PID=$!
+    sleep 2
+    echo "✅ Serveur webhook démarré (PID: $WEBHOOK_PID)"
 fi
 
 echo ""
-echo "🔗 Connexion au tunnel HTTPS public..."
+echo "🔗 Connexion au tunnel Cloudflare..."
+echo ""
+echo "⚠️  Laisse ce terminal ouvert pour recevoir les notifications"
+echo "   Appuie sur Ctrl+C pour arrêter"
 echo ""
 
-# Lancer le tunnel HTTPS via localhost.run
-ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -R 80:localhost:3000 nokey@localhost.run 2>&1
-
-echo ""
-echo "⚠️  Le tunnel est fermé."
-echo "   Pour le relancer : bash start-webhook.sh"
-echo ""
+# Lancer le tunnel Cloudflare
+$CLOUDFLARED tunnel --url http://localhost:3000
