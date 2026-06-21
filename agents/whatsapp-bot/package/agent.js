@@ -167,7 +167,7 @@ class WhatsAppAgent {
 const agent = new WhatsAppAgent({
   botName: 'BantouMind Assistant',
   businessName: 'Mon Business',
-  contactPhone: '+225 01 02 03 04 05',
+  contactPhone: '+237 652 420 373',
   businessHours: 'Lun-Sam: 8h-19h | Dim: 10h-14h'
 });
 
