@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order - BantouMind AI</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .order-page { padding-top: 120px; max-width: 800px; margin: 0 auto; }
+    .order-card { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.06); padding: 40px; margin-bottom: 24px; }
+    .order-card h2 { margin-bottom: 24px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: var(--text-secondary); }
+    .form-group input, .form-group select {
+      width: 100%; padding: 14px 16px; border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);
+      color: var(--text-primary); font-size: 1rem; font-family: inherit;
+      transition: var(--transition);
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108,63,255,0.2);
+    }
+    .form-group select option { background: var(--bg-dark); color: var(--text-primary); }
+    .product-summary { background: linear-gradient(135deg, rgba(108,63,255,0.1), rgba(255,107,53,0.05)); border-radius: var(--radius-sm); padding: 20px; margin: 24px 0; border: 1px solid rgba(108,63,255,0.15); }
+    .product-summary .price { font-size: 2rem; font-weight: 800; }
+    .pay-btn { width: 100%; padding: 18px; background: var(--gradient-main); border: none; border-radius: var(--radius-sm); color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: var(--transition); }
+    .pay-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(108,63,255,0.4); }
+    .pay-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .payment-options { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+    .payment-option { flex: 1; min-width: 120px; padding: 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); text-align: center; cursor: pointer; transition: var(--transition); font-size: 0.85rem; background: transparent; color: var(--text-secondary); }
+    .payment-option:hover { border-color: var(--primary); color: var(--text-primary); }
+    .payment-option.selected { border-color: var(--primary); background: rgba(108,63,255,0.1); color: var(--primary-light); }
+    .payment-option .icon { font-size: 1.5rem; margin-bottom: 4px; }
+    .payment-option .label { font-weight: 600; }
+    .whatsapp-cta { display: block; text-align: center; padding: 20px; background: rgba(37,211,102,0.1); border: 1px solid rgba(37,211,102,0.2); border-radius: var(--radius-sm); text-decoration: none; color: var(--text-primary); margin-top: 16px; transition: var(--transition); }
+    .whatsapp-cta:hover { background: rgba(37,211,102,0.15); }
+  </style>
+</head>
+<body>
+  <div class="loading-bar"></div>
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo"><div class="nav-logo-icon">B</div><span>antouMind AI</span></a>
+      <ul class="nav-links">
+        <li><a href="../index.html">Home</a></li>
+        <li><div class="lang-switch"><a href="../../index.html">FR</a><a href="../index.html" class="active">EN</a></div></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="order-page section">
+    <div class="order-card">
+      <h2>🌍 Order Your AI Agent</h2>
+      <p style="color:var(--text-secondary);margin-bottom:24px;">Secure payment via <strong>Chariow</strong> — Credit card, Mobile Money, or Crypto accepted.</p>
+      
+      <div class="form-group">
+        <label>Select Product</label>
+        <select id="productSelect" onchange="updateSummary()">
+          <option value="whatsapp" data-price="59">WhatsApp Auto Agent - $59</option>
+          <option value="content" data-price="79">Content Creator Agent - $79</option>
+          <option value="lead" data-price="69">Lead Generator Agent - $69</option>
+          <option value="support" data-price="59">Customer Support Bot - $59</option>
+          <option value="finance" data-price="89">Finance & Accounting Agent - $89</option>
+          <option value="duo" data-price="109">Duo Pack (2 agents) - $109</option>
+          <option value="bundle" data-price="249" selected>🔥 Premium Bundle - $249</option>
+        </select>
+      </div>
+
+      <div class="product-summary" id="productSummary">
+        <div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;">🔥 Premium Bundle</div>
+        <div style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:12px;">All 5 AI agents + Reseller License + Lifetime Updates</div>
+        <div class="price">$249</div>
+        <div style="color:var(--text-muted);font-size:0.85rem;">one-time payment</div>
+      </div>
+
+      <h3 style="margin-bottom:16px;">💳 How would you like to pay?</h3>
+      <div class="payment-options">
+        <div class="payment-option selected" onclick="selectPayment(this,'chariow')">
+          <div class="icon">🌍</div>
+          <div class="label">Chariow</div>
+          <div style="font-size:0.75rem;opacity:0.7;">Card + Mobile Money + Crypto</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this,'whatsapp')">
+          <div class="icon">💬</div>
+          <div class="label">WhatsApp</div>
+          <div style="font-size:0.75rem;opacity:0.7;">Order via WhatsApp</div>
+        </div>
+        <div class="payment-option" onclick="selectPayment(this,'email')">
+          <div class="icon">📧</div>
+          <div class="label">Email</div>
+          <div style="font-size:0.75rem;opacity:0.7;">bantoumind.ai@gmail.com</div>
+        </div>
+      </div>
+
+      <p style="color:var(--text-muted);font-size:0.85rem;margin:16px 0;">
+        🔒 Secure payment. Your information is encrypted.
+      </p>
+
+      <button id="payButton" class="pay-btn" onclick="processPayment()">
+        🌍 Pay with Chariow - $249
+      </button>
+
+      <a href="https://wa.me/237652420373?text=I%20want%20to%20buy%20the%20Premium%20Bundle%20($249)%20-%20BantouMind%20AI" 
+         class="whatsapp-cta" target="_blank">
+        💬 Or order directly on WhatsApp → click here
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-bottom">
+      <p>&copy; 2025 BantouMind AI. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    let selectedPayment = 'chariow';
+    const products = {
+      whatsapp: { name: '💬 WhatsApp Auto Agent', desc: 'AI agent for automatic WhatsApp replies, orders, and follow-ups', price: 59 },
+      content: { name: '✍️ Content Creator Agent', desc: 'AI agent for blog posts, social media, and content generation', price: 79 },
+      lead: { name: '🎯 Lead Generator Agent', desc: 'AI agent for finding and qualifying prospects', price: 69 },
+      support: { name: '🎧 Customer Support Bot', desc: 'AI chatbot for website and WhatsApp customer support', price: 59 },
+      finance: { name: '💰 Finance & Accounting Agent', desc: 'AI agent for invoicing, expenses, and financial reports', price: 89 },
+      duo: { name: '🚀 Duo Pack', desc: 'Any 2 AI agents of your choice', price: 109 },
+      bundle: { name: '🔥 Premium Bundle', desc: 'All 5 AI agents + Reseller License + Lifetime Updates', price: 249 }
+    };
+
+    function updateSummary() {
+      const select = document.getElementById('productSelect');
+      const slug = select.value;
+      const product = products[slug];
+      if (!product) return;
+
+      document.getElementById('productSummary').innerHTML = `
+        <div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;">${product.name}</div>
+        <div style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:12px;">${product.desc}</div>
+        <div class="price">$${product.price}</div>
+        <div style="color:var(--text-muted);font-size:0.85rem;">one-time payment</div>
+      `;
+      updatePayButton(slug);
+    }
+
+    function updatePayButton(slug) {
+      const product = products[slug];
+      const btn = document.getElementById('payButton');
+      if (selectedPayment === 'chariow') {
+        btn.innerHTML = `🌍 Pay with Chariow - $${product.price}`;
+        btn.onclick = () => processPayment(slug);
+      } else if (selectedPayment === 'whatsapp') {
+        const msg = encodeURIComponent(`I want to buy ${product.name} ($${product.price}) - BantouMind AI`);
+        btn.innerHTML = `💬 Order via WhatsApp`;
+        btn.onclick = () => window.open(`https://wa.me/237652420373?text=${msg}`, '_blank');
+      } else if (selectedPayment === 'email') {
+        const subj = encodeURIComponent(`Order: ${product.name}`);
+        btn.innerHTML = `📧 Send Email`;
+        btn.onclick = () => window.location.href = `mailto:bantoumind.ai@gmail.com?subject=${subj}`;
+      }
+    }
+
+    function selectPayment(el, method) {
+      document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedPayment = method;
+      const select = document.getElementById('productSelect');
+      updatePayButton(select.value);
+    }
+
+    function processPayment(slug) {
+      const product = products[slug] || products.bundle;
+      alert(`🌍 Chariow Payment\n\nProduct: ${product.name}\nAmount: $${product.price}\n\nYou will be redirected to Chariow's secure payment page to complete your purchase.\n\nAfter payment, we will contact you within 24h to install your agent.`);
+      
+      // Redirect to Chariow checkout (remplace par ton vrai lien Chariow)
+      const chariowLinks = {
+        whatsapp: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20WhatsApp%20Agent%20($59)',
+        content: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Content%20Agent%20($79)',
+        lead: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Lead%20Agent%20($69)',
+        support: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Support%20Bot%20($59)',
+        finance: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Finance%20Agent%20($89)',
+        duo: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Duo%20Pack%20($109)',
+        bundle: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Premium%20Bundle%20($249)'
+      };
+      // Redirect to WhatsApp for now (Chariow checkout URL goes here when API is configured)
+      window.open(chariowLinks[slug] || chariowLinks.bundle, '_blank');
+    }
+
+    // Initial load
+    updateSummary();
+  </script>
+</body>
+</html>
