@@ -30,15 +30,10 @@
     .product-summary .price { font-size: 2rem; font-weight: 800; }
     .pay-btn { width: 100%; padding: 18px; background: var(--gradient-main); border: none; border-radius: var(--radius-sm); color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: var(--transition); }
     .pay-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(108,63,255,0.4); }
-    .pay-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .payment-options { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
-    .payment-option { flex: 1; min-width: 120px; padding: 12px; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); text-align: center; cursor: pointer; transition: var(--transition); font-size: 0.85rem; background: transparent; color: var(--text-secondary); }
-    .payment-option:hover { border-color: var(--primary); color: var(--text-primary); }
-    .payment-option.selected { border-color: var(--primary); background: rgba(108,63,255,0.1); color: var(--primary-light); }
-    .payment-option .icon { font-size: 1.5rem; margin-bottom: 4px; }
-    .payment-option .label { font-weight: 600; }
-    .whatsapp-cta { display: block; text-align: center; padding: 20px; background: rgba(37,211,102,0.1); border: 1px solid rgba(37,211,102,0.2); border-radius: var(--radius-sm); text-decoration: none; color: var(--text-primary); margin-top: 16px; transition: var(--transition); }
-    .whatsapp-cta:hover { background: rgba(37,211,102,0.15); }
+    .order-flow-step { display:flex; align-items:flex-start; gap:16px; padding:16px; background:rgba(255,255,255,0.03); border-radius:12px; margin-bottom:12px; }
+    .order-flow-step .num { width:32px; height:32px; min-width:32px; background:var(--gradient-main); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem; }
+    .row-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media (max-width:600px) { .row-2 { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -56,22 +51,32 @@
   <section class="order-page section">
     <div class="order-card">
       <h2>🌍 Order Your AI Agent</h2>
-      <p style="color:var(--text-secondary);margin-bottom:24px;">Secure payment via <strong>Chariow</strong> — Credit card, Mobile Money, or Crypto accepted.</p>
-      <div style="background:rgba(108,63,255,0.08);border:1px solid rgba(108,63,255,0.15);border-radius:12px;padding:20px;margin-bottom:24px;">
-        <div style="display:flex;align-items:flex-start;gap:12px;">
-          <span style="font-size:1.5rem;">🛡️</span>
-          <div>
-            <strong style="font-size:1rem;">How it works:</strong>
-            <ol style="color:var(--text-secondary);font-size:0.9rem;margin-top:8px;line-height:1.8;padding-left:20px;">
-              <li>Fill in your details below</li>
-              <li>We send you a <strong>secure Chariow payment link</strong> via WhatsApp/email</li>
-              <li>Click the link and pay securely on Chariow <em>(cards, Mobile Money, or crypto)</em></li>
-              <li>We install your agent within 24-48h</li>
-            </ol>
-          </div>
+      <p style="color:var(--text-secondary);margin-bottom:24px;">
+        Secure payment via <strong>Chariow</strong> — Cards, Mobile Money & Crypto accepted worldwide.
+      </p>
+
+      <!-- Payment Flow Steps -->
+      <div style="background:rgba(108,63,255,0.06);border:1px solid rgba(108,63,255,0.12);border-radius:16px;padding:24px;margin-bottom:32px;">
+        <div style="font-weight:700;margin-bottom:16px;">🛡️ How it works:</div>
+        <div class="order-flow-step">
+          <div class="num">1</div>
+          <div>Fill in your details and select your agent below</div>
+        </div>
+        <div class="order-flow-step">
+          <div class="num">2</div>
+          <div>We send you a <strong>secure Chariow payment link</strong> via WhatsApp / Email</div>
+        </div>
+        <div class="order-flow-step">
+          <div class="num">3</div>
+          <div>Click the link and pay securely on Chariow (card, Mobile Money, or crypto)</div>
+        </div>
+        <div class="order-flow-step">
+          <div class="num">4</div>
+          <div>We receive the payment confirmation and install your agent within 24-48h 🚀</div>
         </div>
       </div>
-      
+
+      <!-- Product Selection -->
       <div class="form-group">
         <label>Select Product</label>
         <select id="productSelect" onchange="updateSummary()">
@@ -81,48 +86,46 @@
           <option value="support" data-price="59">Customer Support Bot - $59</option>
           <option value="finance" data-price="89">Finance & Accounting Agent - $89</option>
           <option value="duo" data-price="109">Duo Pack (2 agents) - $109</option>
-          <option value="bundle" data-price="249" selected>🔥 Premium Bundle - $249</option>
+          <option value="bundle" data-price="249" selected>🔥 Premium Bundle (ALL agents) - $249</option>
         </select>
       </div>
 
+      <!-- Customer Info -->
+      <div class="row-2">
+        <div class="form-group">
+          <label>First Name *</label>
+          <input type="text" id="firstName" placeholder="John" required>
+        </div>
+        <div class="form-group">
+          <label>Last Name *</label>
+          <input type="text" id="lastName" placeholder="Doe" required>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="email" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Phone (with country code)</label>
+          <input type="tel" id="phone" placeholder="+1 234 567 8900">
+        </div>
+      </div>
+
+      <!-- Product Summary -->
       <div class="product-summary" id="productSummary">
         <div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;">🔥 Premium Bundle</div>
         <div style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:12px;">All 5 AI agents + Reseller License + Lifetime Updates</div>
         <div class="price">$249</div>
-        <div style="color:var(--text-muted);font-size:0.85rem;">one-time payment</div>
+        <div style="color:var(--text-muted);font-size:0.85rem;">one-time payment • installed for you</div>
       </div>
 
-      <h3 style="margin-bottom:16px;">💳 How would you like to pay?</h3>
-      <div class="payment-options">
-        <div class="payment-option selected" onclick="selectPayment(this,'chariow')">
-          <div class="icon">🌍</div>
-          <div class="label">Chariow</div>
-          <div style="font-size:0.75rem;opacity:0.7;">Card + Mobile Money + Crypto</div>
-        </div>
-        <div class="payment-option" onclick="selectPayment(this,'whatsapp')">
-          <div class="icon">💬</div>
-          <div class="label">WhatsApp</div>
-          <div style="font-size:0.75rem;opacity:0.7;">Order via WhatsApp</div>
-        </div>
-        <div class="payment-option" onclick="selectPayment(this,'email')">
-          <div class="icon">📧</div>
-          <div class="label">Email</div>
-          <div style="font-size:0.75rem;opacity:0.7;">bantoumind.ai@gmail.com</div>
-        </div>
-      </div>
+      <p style="color:var(--text-muted);font-size:0.85rem;margin:16px 0;">🔒 Your info is safe and only used to process your order.</p>
 
-      <p style="color:var(--text-muted);font-size:0.85rem;margin:16px 0;">
-        🔒 Secure payment. Your information is encrypted.
-      </p>
-
-      <button id="payButton" class="pay-btn" onclick="processPayment()">
-        📱 Order Now - Get Your Payment Link →
+      <!-- Submit Button -->
+      <button id="payButton" class="pay-btn" onclick="submitOrder()">
+        📱 Submit Order - Get Your Payment Link →
       </button>
-
-      <a href="https://wa.me/237652420373?text=I%20want%20to%20buy%20the%20Premium%20Bundle%20($249)%20-%20BantouMind%20AI" 
-         class="whatsapp-cta" target="_blank">
-        💬 Or order directly on WhatsApp → click here
-      </a>
     </div>
   </section>
 
@@ -133,64 +136,52 @@
   </footer>
 
   <script>
-    let selectedPayment = 'chariow';
     const products = {
-      whatsapp: { name: '💬 WhatsApp Auto Agent', desc: 'AI agent for automatic WhatsApp replies, orders, and follow-ups', price: 59 },
-      content: { name: '✍️ Content Creator Agent', desc: 'AI agent for blog posts, social media, and content generation', price: 79 },
+      whatsapp: { name: '💬 WhatsApp Auto Agent', desc: 'AI agent for automatic WhatsApp replies, orders, follow-ups', price: 59 },
+      content: { name: '✍️ Content Creator Agent', desc: 'AI agent for blog posts, social media, content generation', price: 79 },
       lead: { name: '🎯 Lead Generator Agent', desc: 'AI agent for finding and qualifying prospects', price: 69 },
-      support: { name: '🎧 Customer Support Bot', desc: 'AI chatbot for website and WhatsApp customer support', price: 59 },
-      finance: { name: '💰 Finance & Accounting Agent', desc: 'AI agent for invoicing, expenses, and financial reports', price: 89 },
-      duo: { name: '🚀 Duo Pack', desc: 'Any 2 AI agents of your choice', price: 109 },
-      bundle: { name: '🔥 Premium Bundle', desc: 'All 5 AI agents + Reseller License + Lifetime Updates', price: 249 }
+      support: { name: '🎧 Customer Support Bot', desc: 'AI chatbot for website & WhatsApp customer support', price: 59 },
+      finance: { name: '💰 Finance & Accounting Agent', desc: 'AI agent for invoicing, expenses, reports', price: 89 },
+      duo: { name: '🚀 Duo Pack (2 agents)', desc: 'Any 2 AI agents of your choice', price: 109 },
+      bundle: { name: '🔥 Premium Bundle', desc: 'All 5 agents + Reseller License + Lifetime Updates', price: 249 }
     };
 
     function updateSummary() {
-      const select = document.getElementById('productSelect');
-      const slug = select.value;
-      const product = products[slug];
-      if (!product) return;
-
+      const slug = document.getElementById('productSelect').value;
+      const p = products[slug];
+      if (!p) return;
       document.getElementById('productSummary').innerHTML = `
-        <div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;">${product.name}</div>
-        <div style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:12px;">${product.desc}</div>
-        <div class="price">$${product.price}</div>
-        <div style="color:var(--text-muted);font-size:0.85rem;">one-time payment</div>
+        <div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;">${p.name}</div>
+        <div style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:12px;">${p.desc}</div>
+        <div class="price">$${p.price}</div>
+        <div style="color:var(--text-muted);font-size:0.85rem;">one-time payment • installed for you</div>
       `;
-      updatePayButton(slug);
     }
 
-    function updatePayButton(slug) {
-      const product = products[slug];
-      const btn = document.getElementById('payButton');
-      if (selectedPayment === 'chariow') {
-        btn.innerHTML = `🌍 Pay with Chariow - $${product.price}`;
-        btn.onclick = () => processPayment(slug);
-      } else if (selectedPayment === 'whatsapp') {
-        const msg = encodeURIComponent(`I want to buy ${product.name} ($${product.price}) - BantouMind AI`);
-        btn.innerHTML = `💬 Order via WhatsApp`;
-        btn.onclick = () => window.open(`https://wa.me/237652420373?text=${msg}`, '_blank');
-      } else if (selectedPayment === 'email') {
-        const subj = encodeURIComponent(`Order: ${product.name}`);
-        btn.innerHTML = `📧 Send Email`;
-        btn.onclick = () => window.location.href = `mailto:bantoumind.ai@gmail.com?subject=${subj}`;
-      }
-    }
+    function submitOrder() {
+      const slug = document.getElementById('productSelect').value;
+      const p = products[slug];
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('email').value.trim();
 
-    function selectPayment(el, method) {
-      document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
-      el.classList.add('selected');
-      selectedPayment = method;
-      const select = document.getElementById('productSelect');
-      updatePayButton(select.value);
-    }
+      if (!firstName || !lastName) { alert('Please enter your first and last name.'); return; }
+      if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
 
-    function processPayment(slug) {
-      const product = products[slug] || products.bundle;
-      const msg = encodeURIComponent(`Order: ${product.name} ($${product.price})\n\nHi! I want to buy the ${product.name} for $${product.price}. Please send me the secure Chariow payment link.`);
+      const msg = encodeURIComponent(
+        `ORDER REQUEST - BantouMind AI\n\n` +
+        `Product: ${p.name}\n` +
+        `Amount: $${p.price}\n\n` +
+        `Customer:\n` +
+        `Name: ${firstName} ${lastName}\n` +
+        `Email: ${email}\n` +
+        `Phone: ${document.getElementById('phone').value || 'N/A'}\n\n` +
+        `Please send me the secure Chariow payment link. Thank you! 🚀`
+      );
+
       window.open(`https://wa.me/237652420373?text=${msg}`, '_blank');
     }
 
-    // Initial load
     updateSummary();
   </script>
 </body>
