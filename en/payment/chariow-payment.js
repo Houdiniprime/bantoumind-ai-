@@ -176,9 +176,11 @@ async function listProductsFromAPI() {
       console.log('ID PRODUIT'.padEnd(28) + '| NOM');
       console.log('-'.repeat(60));
       result.data.data.forEach(p => {
-        console.log(`${(p.id || 'N/A').padEnd(28)}| ${p.name || 'Sans nom'}${p.price ? ` ($${p.price/100})` : ''}`);
+        const price = p.price ? ` (price: ${p.price})` : '';
+        console.log(`${(p.id || 'N/A').padEnd(28)}| ${p.name || 'Sans nom'}${price}`);
       });
       console.log('\n💡 Copiez les IDs ci-dessus et mettez à jour PRODUCTS dans ce script.');
+      console.log('💡 Le format du prix dépend de Chariow — vérifiez dans votre dashboard.');
     } else {
       console.log('⚠️ Réponse inattendue de l\'API:', JSON.stringify(result).slice(0, 300));
     }
