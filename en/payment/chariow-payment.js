@@ -5,6 +5,12 @@
 //   Usage   : node chariow-payment.js
 //   Obtenez votre clé API : https://app.chariow.com/settings/api
 //   Doc     : https://chariow.dev/api-reference/checkout/init-checkout
+// 
+//   ⚠️  Webhooks (Pulses) :
+//   Configurez un webhook dans https://app.chariow.com/settings/api/pulses
+//   pour recevoir les notifications de paiement `successful.sale`.
+//   Endpoint recommandé : email, ou un webhook qui vous notifie.
+//   Événement à écouter : successful.sale
 // ============================================================
 
 // Produits BantouMind AI sur Chariow
@@ -141,6 +147,50 @@ async function generateAllLinks() {
 // ===== Export =====
 module.exports = { createCheckoutLink, PRODUCTS, generateAllLinks };
 
+// ===== Lire les vrais produits Chariow depuis l'API =====
+async function listProductsFromAPI() {
+  const CHARIOW_API_KEY = process.env.CHARIOW_API_KEY || '';
+  if (!CHARIOW_API_KEY) {
+    console.log('⚠️  Clé API Chariow manquante !');
+    console.log('📌 Obtenez-la sur https://app.chariow.com/settings/api\n');
+    console.log('📦 Produits par défaut (définis dans ce script) :');
+    Object.entries(PRODUCTS).forEach(([slug, p]) => {
+      console.log(`  ${p.id.padEnd(25)} → ${slug.padEnd(12)} $${p.price} - ${p.name}`);
+    });
+    return;
+  }
+
+  try {
+    console.log('\n🔍 Récupération des produits depuis Chariow...\n');
+    const response = await fetch('https://api.chariow.com/v1/products?per_page=50', {
+      headers: {
+        'Authorization': `Bearer ${CHARIOW_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const result = await response.json();
+    
+    if (result.data?.data && Array.isArray(result.data.data)) {
+      console.log(`✅ ${result.data.data.length} produits trouvés sur Chariow :\n`);
+      console.log('ID PRODUIT'.padEnd(28) + '| NOM');
+      console.log('-'.repeat(60));
+      result.data.data.forEach(p => {
+        console.log(`${(p.id || 'N/A').padEnd(28)}| ${p.name || 'Sans nom'}${p.price ? ` ($${p.price/100})` : ''}`);
+      });
+      console.log('\n💡 Copiez les IDs ci-dessus et mettez à jour PRODUCTS dans ce script.');
+    } else {
+      console.log('⚠️ Réponse inattendue de l\'API:', JSON.stringify(result).slice(0, 300));
+    }
+  } catch (err) {
+    console.error('❌ Erreur API:', err.message);
+    console.log('\n📦 Produits par défaut (définis dans ce script) :');
+    Object.entries(PRODUCTS).forEach(([slug, p]) => {
+      console.log(`  ${p.id.padEnd(25)} → ${slug.padEnd(12)} $${p.price} - ${p.name}`);
+    });
+  }
+}
+
 // ===== CLI =====
 if (require.main === module) {
   try { require('dotenv').config(); } catch(e) {}
@@ -149,6 +199,8 @@ if (require.main === module) {
   
   if (args[0] === '--all') {
     generateAllLinks();
+  } else if (args[0] === '--list-products' || args[0] === '-l') {
+    listProductsFromAPI();
   } else if (args[0] && PRODUCTS[args[0]]) {
     const email = args[1] || 'client@example.com';
     const name = args[2] || 'Client BantouMind';
@@ -158,11 +210,16 @@ if (require.main === module) {
   } else {
     console.log(`
 📋 Usage:
-  node chariow-payment.js <product> [email] [name]
-  node chariow-payment.js --all
+  node chariow-payment.js <product> [email] [name]   → Créer un lien de paiement
+  node chariow-payment.js --all                       → Générer tous les liens
+  node chariow-payment.js --list-products              → Lister les produits Chariow
 
 📦 Produits disponibles:
 ${Object.entries(PRODUCTS).map(([slug, p]) => `  - ${slug}: ${p.name} ($${p.price})`).join('\n')}
+
+🔔 Webhook : Configurez un Pulse dans votre dashboard Chariow
+   pour recevoir les notifications successful.sale.
+   Dashboard → Settings → API → Pulses
 
 🌍 Paiement via Chariow : https://app.chariow.com
 `);

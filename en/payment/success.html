@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmed - BantouMind AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0a1a;
+            padding: 20px;
+        }
+        .card {
+            background: linear-gradient(145deg, #12122a, #1a1a3e);
+            border: 1px solid rgba(108, 63, 255, 0.3);
+            border-radius: 20px;
+            padding: 50px 40px;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(108, 63, 255, 0.15);
+        }
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #6c3fff, #00d4aa);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #fff;
+            box-shadow: 0 8px 30px rgba(108, 63, 255, 0.4);
+        }
+        h1 {
+            font-size: 28px;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        p {
+            color: #a0a0c0;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .highlight {
+            color: #00d4aa;
+            font-weight: 600;
+        }
+        .steps {
+            text-align: left;
+            margin: 28px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(108, 63, 255, 0.1);
+        }
+        .steps li {
+            color: #c0c0e0;
+            font-size: 14px;
+            line-height: 1.8;
+            list-style: none;
+            padding-left: 24px;
+            position: relative;
+        }
+        .steps li::before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn {
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6c3fff, #00d4aa);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 63, 255, 0.4);
+        }
+        .btn-outline {
+            border: 1px solid rgba(108, 63, 255, 0.3);
+            color: #a0a0c0;
+        }
+        .btn-outline:hover {
+            border-color: #6c3fff;
+            color: #fff;
+        }
+        .loading {
+            display: inline-block;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="checkmark">✓</div>
+        <h1>Payment Confirmed! 🎉</h1>
+        <p>Thank you for your purchase of <span class="highlight" id="product-name">your BantouMind AI agent</span>.</p>
+        
+        <div class="steps">
+            <p style="color:#c0c0e0;font-size:14px;margin-bottom:12px;font-weight:600;">📋 What happens next:</p>
+            <li>Your payment has been received successfully</li>
+            <li style="margin-top:8px;">You will receive your agent <span class="highlight">within 24 hours</span> via email</li>
+            <li style="margin-top:8px;">A setup guide and your license key will be included</li>
+            <li style="margin-top:8px;">Need help? Contact us anytime on WhatsApp</li>
+        </div>
+
+        <p style="font-size:14px;color:#8080a0;">
+            📧 Confirmation sent to: <strong id="customer-email" style="color:#c0c0e0;">your email</strong>
+        </p>
+
+        <div class="btn-group">
+            <a href="https://wa.me/237652420373" class="btn btn-primary" target="_blank">
+                💬 WhatsApp Support
+            </a>
+            <a href="https://houdiniprime.github.io/bantoumind-ai-/en/" class="btn btn-outline">
+                ← Back to Site
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Récupère les infos depuis l'URL (email, product name)
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get('email') || 'your email';
+        document.getElementById('customer-email').textContent = email;
+    </script>
+</body>
+</html>
