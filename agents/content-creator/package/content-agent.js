@@ -1,140 +1,173 @@
-// ==========================================
-//   BantouMind AI - Content Creator Agent v1.0
-//   Création de contenu automatique
-// ==========================================
+// ============================================================
+//   BantouMind AI - Content Creator Agent v2.0 (GEMINI)
+//   Création de contenu RÉELLE via Google Gemini API (GRATUIT)
+//   Install : npm install @google/generative-ai dotenv
+//   Usage   : node content-agent.js
+//   Obtenez une clé API gratuite : https://aistudio.google.com/apikey
+// ============================================================
 
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const fs = require('fs');
-const path = require('path');
 
 class ContentCreatorAgent {
   constructor(config = {}) {
     this.config = {
       brandName: config.brandName || 'Ma Marque',
-      brandVoice: config.brandVoice || 'professionnel',
+      brandVoice: config.brandVoice || 'professionnel et engageant',
       language: config.language || 'fr',
       platforms: config.platforms || ['facebook', 'instagram', 'linkedin', 'blog'],
+      apiKey: config.apiKey || process.env.GEMINI_API_KEY || '',
       ...config
     };
-    
-    this.content = this.loadJSON('content.json', { posts: [], schedule: [], stats: {} });
-    
-    console.log(`✍️ Agent Création de Contenu BantouMind AI v1.0`);
-    console.log(`📝 Prêt à générer du contenu pour ${this.config.brandName}`);
+
+    if (!this.config.apiKey) {
+      console.log('⚠️  Clé API Gemini manquante !');
+      console.log('📌 Obtenez une clé gratuite : https://aistudio.google.com/apikey');
+      console.log('📌 Puis : export GEMINI_API_KEY=votre_clé\n');
+    }
+
+    this.genAI = this.config.apiKey ? new GoogleGenerativeAI(this.config.apiKey) : null;
+    this.model = this.genAI ? this.genAI.getGenerativeModel({ model: 'gemini-2.0-flash' }) : null;
+    this.content = this.loadJSON('content.json', { posts: [], schedule: [], stats: { totalGenerated: 0 } });
+
+    console.log(`
+╔══════════════════════════════════════╗
+║  BantouMind AI - Content Creator     ║
+║       Version 2.0 (Gemini IA)        ║
+║    Génération de contenu RÉELLE      ║
+╚══════════════════════════════════════╝
+`);
+    if (this.model) console.log('✅ Gemini IA connectée !\n');
   }
 
   loadJSON(file, def) {
-    try { return JSON.parse(fs.readFileSync(file, 'utf8')); } 
+    try { return JSON.parse(fs.readFileSync(file, 'utf8')); }
     catch { fs.writeFileSync(file, JSON.stringify(def, null, 2)); return def; }
   }
 
-  // Génération de posts (simulé - l'IA génère du contenu varié)
-  generatePost(type = 'facebook') {
-    const templates = {
-      facebook: {
-        engaged: [
-          "🔥 QUESTION DU JOUR : Qu'est-ce qui vous motive chaque matin ? Dites-nous en commentaire ! 👇",
-          "💡 Le saviez-vous ? {{fact}} 🧠\n\nChez {{brand}}, on partage nos connaissances avec vous !",
-          "📢 NOUVEAUTÉ ! Nous sommes fiers de vous présenter {{product}} 🎉\n\nDécouvrez-le dès maintenant 👉"
-        ],
-        promotion: [
-          "🎁 OFFRE SPÉCIALE cette semaine ! -20% sur {{product}} 🎉\n\n📱 Commander maintenant 👉",
-          "🏆 {{brand}} vous remercie pour votre confiance ! Profitez de -10% avec le code MERCI10 💝"
-        ]
-      },
-      instagram: {
-        engaged: [
-          "🔥 C'est le moment de partager ! Taggez un ami qui a besoin de voir ça 👇",
-          "✨ Derrière les coulisses de {{brand}} 🚀",
-          "📸 Votre avis nous intéresse ! Dites-nous tout en story 👋"
-        ]
-      },
-      linkedin: {
-        professional: [
-          "🚀 L'industrie évolue, et nous aussi ! Voici comment {{brand}} innove en 2025 💡",
-          "📊 3 conseils pour booster votre activité cette semaine :\n\n1️⃣ {{tip1}}\n2️⃣ {{tip2}}\n3️⃣ {{tip3}}\n\nQuel est votre meilleur conseil ?",
-          "🎯 Retour d'expérience : ce que nous avons appris cette année chez {{brand}}"
-        ]
-      },
-      blog: [
-        "📝 Article : {{topic}}\n\nDécouvrez comment {{benefit}} dans notre nouvel article de blog !\n\n👉 Lire la suite",
-        "📖 Guide complet : {{topic}}\n\n{{brand}} vous partage son expertise en {{field}}"
-      ],
-      product: [
-        "🛍️ {{product_name}}\n💰 {{price}} FCFA\n✅ {{feature1}}\n✅ {{feature2}}\n✅ {{feature3}}\n\n📱 Commander : {{order_link}}"
-      ]
+  async generateWithGemini(prompt) {
+    if (!this.model) {
+      return `⚠️ Configuration requise :\n\nPour générer du vrai contenu, configurez votre clé API Gemini gratuite :\n1. Allez sur https://aistudio.google.com/apikey\n2. Créez une clé (gratuite, 60 requêtes/min)\n3. Définissez la variable : export GEMINI_API_KEY=votre_clé\n\nSinon, voici un exemple de contenu généré :\n\n${this.getExamplePost()}`;
+    }
+    try {
+      const result = await this.model.generateContent(prompt);
+      const text = result.response.text();
+      this.content.stats.totalGenerated++;
+      this.saveContent();
+      return text;
+    } catch (err) {
+      console.error('❌ Erreur Gemini:', err.message);
+      return `⚠️ Erreur de génération : ${err.message}\n\nContenu de secours :\n${this.getExamplePost()}`;
+    }
+  }
+
+  getExamplePost() {
+    const examples = [
+      `✨ Découvrez comment ${this.config.brandName} révolutionne votre quotidien ! 🚀\n\n💡 Innovation, qualité, service - notre engagement envers vous.\n\n#Innovation #Qualité ${this.config.brandName.replace(/\\s/g, '')}`,
+      `🔥 NOUVEAUTÉ ! Nous sommes fiers de présenter notre dernier service chez ${this.config.brandName} 🎉\n\nDes résultats exceptionnels pour nos clients. Rejoignez le mouvement ! 👇\n\n#Nouveauté ${this.config.brandName.replace(/\\s/g, '')}`
+    ];
+    return examples[Math.floor(Math.random() * examples.length)];
+  }
+
+  async generatePost(platform = 'facebook') {
+    const prompts = {
+      facebook: `Rédige un post Facebook engageant et professionnel pour ${this.config.brandName}. Ton: ${this.config.brandVoice}. Langue: ${this.config.language}. 3-4 phrases avec emojis pertinents.`,
+      instagram: `Rédige une légende Instagram pour ${this.config.brandName}. Ton: ${this.config.brandVoice}. Langue: ${this.config.language}. 5-6 lignes avec hashtags pertinents. Inclus un call-to-action.`,
+      linkedin: `Rédige un post LinkedIn professionnel pour ${this.config.brandName}. Ton: ${this.config.brandVoice} mais plus formel. Langue: ${this.config.language}. 4-5 phrases avec des données ou conseils utiles.`,
+      blog: `Rédige le début d'un article de blog (intro + 2 paragraphes) pour ${this.config.brandName}. Sujet: les tendances actuelles dans notre secteur. Ton: ${this.config.brandVoice}. Langue: ${this.config.language}.`,
+      twitter: `Rédige un tweet/X engageant pour ${this.config.brandName}. Ton: ${this.config.brandVoice}. Langue: ${this.config.language}. Maximum 280 caractères avec 2-3 hashtags.`,
+      newsletter: `Rédige le début d'une newsletter (objet + intro) pour ${this.config.brandName}. Ton: ${this.config.brandVoice} mais chaleureux. Langue: ${this.config.language}. 3-4 phrases.`
     };
 
-    const platformTemplates = templates[type] || templates.facebook;
-    const category = Object.keys(platformTemplates)[Math.floor(Math.random() * Object.keys(platformTemplates).length)];
-    const template = platformTemplates[category][Math.floor(Math.random() * platformTemplates[category].length)];
+    const prompt = prompts[platform] || prompts.facebook;
+    const content = await this.generateWithGemini(prompt);
     
-    return this.fillTemplate(template);
+    const post = {
+      id: `post_${Date.now()}`,
+      platform,
+      content,
+      createdAt: new Date().toISOString(),
+      scheduledFor: null
+    };
+    
+    this.content.posts.push(post);
+    this.saveContent();
+    return post;
   }
 
-  fillTemplate(t) {
-    const facts = [
-      "80% des clients préfèrent les entreprises réactives sur les réseaux sociaux",
-      "les posts avec images génèrent 2.3x plus d'engagement",
-      "le marketing automation peut réduire les coûts de 30%"
-    ];
-    return t
-      .replace(/{{brand}}/g, this.config.brandName)
-      .replace(/{{fact}}/g, facts[Math.floor(Math.random() * facts.length)])
-      .replace(/{{product}}/g, 'Notre nouveau service')
-      .replace(/{{topic}}/g, 'Comment booster votre activité avec l\'IA')
-      .replace(/{{benefit}}/g, 'gagner du temps et augmenter vos ventes')
-      .replace(/{{field}}/g, 'marketing digital')
-      .replace(/{{tip1}}/g, 'Soignez votre présence en ligne')
-      .replace(/{{tip2}}/g, 'Automatisez les tâches répétitives')
-      .replace(/{{tip3}}/g, 'Fidélisez vos clients');
+  async generateProductDescription(name, features = [], price = '') {
+    const prompt = `Rédige une description produit convaincante pour "${name}" de ${this.config.brandName}. 
+Caractéristiques: ${features.join(', ')}. Prix: ${price}. 
+Ton: ${this.config.brandVoice}. Langue: ${this.config.language}.
+Inclus: titre accrocheur, 3 avantages clés, call-to-action. Maximum 150 mots.`;
+
+    return this.generateWithGemini(prompt);
   }
 
-  generateContentPlan(days = 7) {
+  async generateContentPlan(days = 7) {
     const platforms = this.config.platforms;
     const plan = [];
-    const types = ['engaged', 'promotion', 'professional', 'product'];
     
     for (let d = 0; d < days; d++) {
       const date = new Date();
       date.setDate(date.getDate() + d);
+      const dateStr = date.toISOString().split('T')[0];
       
       for (const platform of platforms) {
+        const post = await this.generatePost(platform);
         plan.push({
-          date: date.toISOString().split('T')[0],
+          date: dateStr,
           platform,
-          type: types[Math.floor(Math.random() * types.length)],
-          content: this.generatePost(platform),
-          time: `${8 + Math.floor(Math.random() * 10)}h${Math.random() > 0.5 ? '00' : '30'}`
+          content: post.content,
+          status: 'scheduled'
         });
       }
     }
     
     this.content.schedule = plan;
-    fs.writeFileSync('content.json', JSON.stringify(this.content, null, 2));
+    this.saveContent();
     return plan;
   }
 
-  generateProductDescription(name, price, features) {
-    return `✨ ${name}\n\n💰 ${price} FCFA\n\n📌 Caractéristiques :\n${features.map(f => `✅ ${f}`).join('\n')}\n\n📱 Commandez dès maintenant et recevez sous 24-48h ! #${this.config.brandName.replace(/\s/g, '')}`;
+  saveContent() {
+    fs.writeFileSync('content.json', JSON.stringify(this.content, null, 2));
   }
 
-  getWeeklyReport() {
-    const totalPosts = this.content.schedule.length;
+  getReport() {
     return `
-📊 RAPPORT HEBDOMADAIRE - ${this.config.brandName}
+📊 RAPPORT - ${this.config.brandName}
 ═══════════════════════════════════
-📝 Posts programmés : ${totalPosts}
+📝 Posts générés : ${this.content.posts.length}
+📅 Planifiés : ${this.content.schedule.length}
+🤖 IA : ${this.model ? 'Gemini Active ✅' : 'Mode démo ⚠️'}
 📱 Plateformes : ${this.config.platforms.join(', ')}
-🎯 Prochaine publication : ${this.content.schedule[0]?.date || 'Aucune'}
 ✅ Statut : ACTIF
 ═══════════════════════════════════`;
   }
 }
 
-// Demo
-const agent = new ContentCreatorAgent({ brandName: 'Ma Marque', brandVoice: 'professionnel' });
-console.log('\n📱 Exemple de post Facebook :');
-console.log(agent.generatePost('facebook'));
-console.log('\n📅 Plan de contenu généré :');
-console.log(agent.generateContentPlan(3));
+// ===== DEMO =====
+console.log('🚀 Démarrage de l\'agent de création de contenu...\n');
+
+async function demo() {
+  // Essaye de charger la clé depuis .env
+  try { require('dotenv').config(); } catch(e) {}
+  
+  const agent = new ContentCreatorAgent({
+    brandName: 'BantouMind AI',
+    brandVoice: 'professionnel, innovant et accessible',
+    language: 'fr',
+    platforms: ['facebook', 'instagram', 'linkedin'],
+    apiKey: process.env.GEMINI_API_KEY
+  });
+
+  console.log('\n📱 Génération d\'un post Facebook...\n');
+  const post = await agent.generatePost('facebook');
+  console.log(post.content);
+
+  console.log('\n' + agent.getReport());
+}
+
+demo();
+
 module.exports = ContentCreatorAgent;

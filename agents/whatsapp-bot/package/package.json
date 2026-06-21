@@ -1,14 +1,15 @@
 {
   "name": "bantoumind-whatsapp-agent",
-  "version": "1.0.0",
-  "description": "Agent WhatsApp Automatique BantouMind AI - Répond, qualifie et convertit automatiquement",
+  "version": "2.0.0",
+  "description": "BantouMind AI - WhatsApp Agent with real WhatsApp connection via Baileys",
   "main": "agent.js",
   "scripts": {
     "start": "node agent.js",
-    "test": "node test.js"
+    "scan": "node agent.js"
   },
-  "keywords": ["whatsapp", "bot", "ai", "automation", "bantoumind"],
-  "author": "BantouMind AI",
-  "license": "SEE LICENSE IN LICENSE.txt",
-  "dependencies": {}
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.0",
+    "qrcode-terminal": "^0.12.0",
+    "pino": "^8.17.0"
+  }
 }

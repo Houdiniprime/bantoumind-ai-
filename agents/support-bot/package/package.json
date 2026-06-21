@@ -1,0 +1,14 @@
+{
+  "name": "bantoumind-support-agent",
+  "version": "2.0.0",
+  "description": "BantouMind AI - Support Bot with real WhatsApp connection via Baileys",
+  "main": "support-agent.js",
+  "scripts": {
+    "start": "node support-agent.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.0",
+    "qrcode-terminal": "^0.12.0",
+    "pino": "^8.17.0"
+  }
+}

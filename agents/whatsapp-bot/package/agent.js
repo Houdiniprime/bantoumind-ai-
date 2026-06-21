@@ -1,185 +1,203 @@
-// ==========================================
-//   BantouMind AI - WhatsApp Agent  v1.0
-//   Agent WhatsApp Automatique
-//   Prêt à l'emploi - Zéro configuration
-// ==========================================
+// ============================================================
+//   BantouMind AI - WhatsApp Agent  v2.0 (BAILEYS)
+//   Connexion WhatsApp RÉELLE via Baileys Library
+//   Install : npm install @whiskeysockets/baileys qrcode-terminal pino
+//   Usage   : node agent.js (scannez le QR code avec WhatsApp)
+// ============================================================
 
+const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, makeInMemoryStore } = require('@whiskeysockets/baileys');
+const qrcode = require('qrcode-terminal');
+const pino = require('pino');
 const fs = require('fs');
-const path = require('path');
 
-class WhatsAppAgent {
+class BantouMindWhatsAppBot {
   constructor(config = {}) {
     this.config = {
       botName: config.botName || 'BantouMind Assistant',
       businessName: config.businessName || 'Mon Business',
-      welcomeMessage: config.welcomeMessage || 'Bonjour ! 👋 Bienvenue ! Je suis votre assistant automatique.',
-      contactPhone: config.contactPhone || '+237652420373',
-      contactEmail: config.contactEmail || 'contact@business.com',
-      businessHours: config.businessHours || 'Lun-Sam: 8h-18h',
-      catalogLink: config.catalogLink || '#',
-      autoReply: config.autoReply !== false,
+      adminNumber: config.adminNumber || null, // Numéro du propriétaire (pour escalation)
+      contactEmail: config.contactEmail || 'bantoumind.ai@gmail.com',
+      businessHours: config.businessHours || 'Lun-Sam: 8h-19h',
       language: config.language || 'fr',
       ...config
     };
     
-    this.database = this.loadJSON('database.json', { contacts: [], conversations: [], stats: {} });
-    this.templates = this.loadJSON('templates.json', this.getDefaultTemplates());
+    this.sock = null;
+    this.store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) });
+    this.logger = pino({ level: 'silent' }); // Silence Baileys logs
     
-    console.log(`\n╔═══════════════════════════════════╗`);
-    console.log(`║   BantouMind AI - WhatsApp Agent   ║`);
-    console.log(`║         Version 1.0.0               ║`);
-    console.log(`╚═══════════════════════════════════╝`);
-    console.log(`✅ Agent initialisé avec succès !`);
-    console.log(`📱 Bot: ${this.config.botName}`);
-    console.log(`🏢 Business: ${this.config.businessName}`);
-    console.log(`⏰ Mode: 24/7 - Automatique\n`);
+    console.log(`
+╔══════════════════════════════════════╗
+║    BantouMind AI - WhatsApp Agent    ║
+║         Version 2.0 (Baileys)        ║
+║     Connexion WhatsApp RÉELLE        ║
+╚══════════════════════════════════════╝
+`);
   }
 
-  loadJSON(filename, defaultValue) {
-    try {
-      if (fs.existsSync(filename)) {
-        return JSON.parse(fs.readFileSync(filename, 'utf8'));
+  async start() {
+    const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys');
+    
+    this.sock = makeWASocket({
+      printQRInTerminal: false,
+      auth: state,
+      logger: this.logger,
+      browser: ['BantouMind AI', 'Chrome', '2.0.0'],
+      syncFullHistory: false
+    });
+
+    this.store.bind(this.sock.ev);
+
+    // QR Code event
+    this.sock.ev.on('connection.update', async (update) => {
+      const { connection, lastDisconnect, qr } = update;
+      
+      if (qr) {
+        console.log('\n📱 SCANNEZ CE QR CODE AVEC VOTRE WHATSAPP :');
+        console.log('📍 Menu WhatsApp > Appareils liés > Scanner le code\n');
+        qrcode.generate(qr, { small: true });
+        console.log('\n⏳ En attente du scan...\n');
       }
-    } catch (e) {
-      console.log(`⚠️ Fichier ${filename} non trouvé, création...`);
-    }
-    fs.writeFileSync(filename, JSON.stringify(defaultValue, null, 2));
-    return defaultValue;
+
+      if (connection === 'open') {
+        console.log('✅✅✅ CONNECTÉ À WHATSAPP ! ✅✅✅');
+        console.log(`🤖 ${this.config.botName} est en ligne !`);
+        console.log(`🏢 ${this.config.businessName}\n`);
+      }
+
+      if (connection === 'close') {
+        const reason = lastDisconnect?.error?.output?.statusCode;
+        if (reason === DisconnectReason.loggedOut) {
+          console.log('❌ Session expirée. Supprimez le dossier auth_info_baileys et relancez.');
+        } else {
+          console.log('🔄 Reconnexion dans 5 secondes...');
+          setTimeout(() => this.start(), 5000);
+        }
+      }
+    });
+
+    // Save credentials
+    this.sock.ev.on('creds.update', saveCreds);
+
+    // Listen for messages
+    this.sock.ev.on('messages.upsert', async (msg) => {
+      const message = msg.messages[0];
+      if (!message.key.fromMe && !message.key.remoteJid.endsWith('@g.us')) {
+        await this.handleIncomingMessage(message);
+      }
+    });
   }
 
-  getDefaultTemplates() {
-    return {
-      welcome: [
-        "Bonjour ! 👋 Bienvenue chez {{business_name}}. Je suis {{bot_name}}, votre assistant virtuel. Comment puis-je vous aider aujourd'hui ?",
-        "👋 Salut ! Moi c'est {{bot_name}}, l'assistant IA. En quoi puis-je vous être utile ?",
-        "Bienvenue sur {{business_name}} ! 🎉 Je suis là pour vous aider. Que puis-je faire pour vous ?"
-      ],
-      catalog: "📋 Voici notre catalogue :\n\n1️⃣ {{product_1}} - {{price_1}} FCFA\n2️⃣ {{product_2}} - {{price_2}} FCFA\n3️⃣ {{product_3}} - {{price_3}} FCFA\n\nSouhaitez-vous commander ? 🛒",
-      order: {
-        request: "🛒 Super ! Pour passer commande, j'ai besoin de :\n\n1️⃣ Nom du produit\n2️⃣ Quantité\n3️⃣ Adresse de livraison\n4️⃣ Téléphone\n\nEnvoyez ces infos ✅",
-        confirm: "✅ Commande #{{order_id}} reçue ! Récapitulatif :\n\n{{order_details}}\n\n📞 Nous vous contacterons sous 24h pour la livraison.",
-        delivery: "📦 Votre commande #{{order_id}} a été livrée ! Merci pour votre confiance 🙏"
-      },
-      followup: [
-        "Bonjour ! 👋 Vous aviez demandé des infos sur nos produits. Souhaitez-vous commander maintenant ?",
-        "Petit rappel : {{business_name}} est là pour vous servir ! 📋",
-        "Offre spéciale en ce moment ! -10% sur votre première commande 🎉"
-      ],
-      info: `📍 Nous contacter :\n📞 {{contact_phone}}\n📧 {{contact_email}}\n⏰ {{business_hours}}`
-    };
+  async handleIncomingMessage(message) {
+    const sender = message.key.remoteJid;
+    const text = message.message?.conversation || 
+                 message.message?.extendedTextMessage?.text || 
+                 '';
+    const pushName = message.pushName || 'Client';
+
+    if (!text.trim()) return;
+
+    console.log(`📩 [${new Date().toLocaleTimeString()}] ${pushName}: ${text}`);
+
+    const reply = this.generateReply(text);
+    await this.sock.sendMessage(sender, { text: reply });
+    console.log(`🤖 Réponse: ${reply.substring(0, 50)}...`);
   }
 
-  handleMessage(from, text) {
-    const response = this.generateResponse(text);
-    this.logConversation(from, text, response);
-    return response;
-  }
-
-  generateResponse(text) {
-    if (!text || text.trim() === '') {
-      return this.fillTemplate(this.templates.welcome[0]);
-    }
-
+  generateReply(text) {
     const msg = text.toLowerCase().trim();
-    
-    // Salutations
-    if (msg.match(/^(bonjour|salut|hello|bonsoir|bsr|slt|hi|cc)/i)) {
-      return this.fillTemplate(this.getRandom(this.templates.welcome));
+    const lang = this.config.language;
+
+    // Greetings
+    if (msg.match(/^(bonjour|salut|hello|hi|bsr|slt|cc|good morning|good evening)/i)) {
+      const greetings = lang === 'fr' 
+        ? [`Bonjour ! 👋 Bienvenue chez ${this.config.businessName} ! Je suis ${this.config.botName}, votre assistant IA. Comment puis-je vous aider ? 😊`,
+           `👋 Salut ! Je suis ${this.config.botName}. En quoi puis-je vous être utile aujourd'hui ?`]
+        : [`Hello! 👋 Welcome to ${this.config.businessName}! I'm ${this.config.botName}, your AI assistant. How can I help you? 😊`,
+           `👋 Hi there! I'm ${this.config.botName}. How can I assist you today?`];
+      return greetings[Math.floor(Math.random() * greetings.length)];
     }
-    
-    // Catalogue / Produits
-    if (msg.match(/catalogue|produit|article|tarif|prix|combien|menu|service/i)) {
-      return this.fillTemplate(this.templates.catalog);
+
+    // Catalog / Products
+    if (msg.match(/catalogue|catalog|produit|product|prix|price|tarif|combien|how much|menu|service|bundle|agent/i)) {
+      return lang === 'fr'
+        ? `📋 *Notre Catalogue IA :*\n\n1️⃣ 🤖 *WhatsApp Agent* - automatise vos messages\n2️⃣ ✍️ *Content Agent* - crée du contenu pour vous\n3️⃣ 🎯 *Lead Agent* - trouve des clients\n4️⃣ 🎧 *Support Bot* - répond à vos clients\n5️⃣ 🚀 *Premium Bundle* - tous les agents + licence revente\n\n👉 Contactez-nous pour commander !`
+        : `📋 *Our AI Catalog:*\n\n1️⃣ 🤖 *WhatsApp Agent* - automate your messages\n2️⃣ ✍️ *Content Agent* - create content for you\n3️⃣ 🎯 *Lead Agent* - find customers\n4️⃣ 🎧 *Support Bot* - answer your customers\n5️⃣ 🚀 *Premium Bundle* - all agents + reseller license\n\n👉 Contact us to order!`;
     }
-    
-    // Commande / Achat
-    if (msg.match(/commander|acheter|achat|prendre|réserv|command|buy|order/i)) {
-      const orderId = Math.floor(Math.random() * 9999) + 1000;
-      return `🛒 Super ! Pour passer commande, j'ai besoin de :\n\n1️⃣ Nom du produit\n2️⃣ Quantité\n3️⃣ Adresse de livraison\n4️⃣ Téléphone\n\nEnvoyez ces infos et je prépare votre commande #${orderId} ! ✅`;
+
+    // Order / Buy
+    if (msg.match(/commander|acheter|buy|order|achat|prendre|purchase|payer|pay/i)) {
+      return lang === 'fr'
+        ? `🛒 *Pour commander :*\n\n1️⃣ Choisissez votre agent\n2️⃣ Paiement sécurisé via *Chariow* (carte, Mobile Money, crypto)\n3️⃣ Installation sous 24-48h\n\n📱 Contactez-nous par email : ${this.config.contactEmail}\n💰 Paiement Mobile Money aussi accepté !`
+        : `🛒 *To order:*\n\n1️⃣ Choose your agent\n2️⃣ Secure payment via *Chariow* (card, Mobile Money, crypto)\n3️⃣ Installation within 24-48h\n\n📱 Contact us by email: ${this.config.contactEmail}\n💰 Mobile Money payment also accepted!`;
     }
-    
-    // Contact / Adresse
-    if (msg.match(/contact|adresse|localis|où|ou .*(?!trouv)/i)) {
-      return this.fillTemplate(this.templates.info);
+
+    // Contact / Info
+    if (msg.match(/contact|info|adresse|address|email|phone|téléphone/i)) {
+      return lang === 'fr'
+        ? `📍 *Nous contacter :*\n📧 Email : ${this.config.contactEmail}\n⏰ ${this.config.businessHours}\n\n💬 Je suis là pour vous aider !`
+        : `📍 *Contact us:*\n📧 Email: ${this.config.contactEmail}\n⏰ ${this.config.businessHours}\n\n💬 I'm here to help!`;
     }
-    
-    // Remerciement
-    if (msg.match(/merci|mercii|thx|thanks|thank/i)) {
-      return "Avec plaisir ! 😊 N'hésitez pas si vous avez d'autres questions. Belle journée ! 🌟";
+
+    // Thanks
+    if (msg.match(/merci|thanks|thank|thx/i)) {
+      return lang === 'fr'
+        ? `Avec plaisir ! 😊 N'hésitez pas si vous avez d'autres questions. Bonne journée ! 🌟`
+        : `You're welcome! 😊 Feel free to ask if you have any other questions. Have a great day! 🌟`;
     }
-    
-    // Horaires
-    if (msg.match(/horaire|heure|quand|ouvrir|fermé/i)) {
-      return `⏰ Nos horaires d'ouverture :\n${this.config.businessHours}\n\nNous sommes joignables 7j/7 par message ! 💬`;
+
+    // Hours
+    if (msg.match(/horaire|hour|heure|when|quand|ouvrir|open/i)) {
+      return lang === 'fr'
+        ? `⏰ *Nos horaires :* ${this.config.businessHours}\n\nMais je suis là 24/7 pour répondre à vos questions ! 💬`
+        : `⏰ *Our hours:* ${this.config.businessHours}\n\nBut I'm here 24/7 to answer your questions! 💬`;
     }
-    
-    // Réponse par défaut
-    return `Merci pour votre message ! ✅\n\nJe suis votre assistant automatique. Voici ce que je peux faire :\n\n📋 Voir le catalogue\n🛒 Passer une commande\n📍 Nos coordonnées\n💬 Parler à un conseiller\n\nQue souhaitez-vous ?`;
+
+    // Pricing
+    if (msg.match(/prix|price|combien|cost|tarif|how much/i)) {
+      return lang === 'fr'
+        ? `💰 *Nos tarifs :*\n\n🤖 Agent simple : 35 000 - 50 000 FCFA\n🚀 Pack Duo : 65 000 FCFA\n💎 Premium Bundle : 150 000 FCFA (tous les agents + licence revente)\n\n🌍 Paiement via Chariow (Mobile Money, carte, crypto) accepté !`
+        : `💰 *Our pricing:*\n\n🤖 Single Agent: $59 - $89\n🚀 Duo Pack: $109\n💎 Premium Bundle: $249 (all agents + reseller license)\n\n🌍 Payment via Chariow (Mobile Money, card, crypto) accepted!`;
+    }
+
+    // Default response
+    return lang === 'fr'
+      ? `Merci pour votre message ! ✅\n\nJe suis ${this.config.botName}. Voici ce que je peux faire :\n\n📋 *Catalogue* - Voir nos agents IA\n🛒 *Commander* - Acheter un agent\n💰 *Tarifs* - Voir les prix\n📍 *Contact* - Nos coordonnées\n\nQue souhaitez-vous ?`
+      : `Thank you for your message! ✅\n\nI'm ${this.config.botName}. Here's what I can do:\n\n📋 *Catalog* - See our AI agents\n🛒 *Order* - Buy an agent\n💰 *Pricing* - See prices\n📍 *Contact* - Our info\n\nWhat would you like?`;
   }
 
-  fillTemplate(template) {
-    return template
-      .replace(/{{bot_name}}/g, this.config.botName)
-      .replace(/{{business_name}}/g, this.config.businessName)
-      .replace(/{{contact_phone}}/g, this.config.contactPhone)
-      .replace(/{{contact_email}}/g, this.config.contactEmail)
-      .replace(/{{business_hours}}/g, this.config.businessHours)
-      .replace(/{{catalog_link}}/g, this.config.catalogLink)
-      .replace(/{{product_1}}/g, 'Produit A').replace(/{{price_1}}/g, '10 000')
-      .replace(/{{product_2}}/g, 'Produit B').replace(/{{price_2}}/g, '25 000')
-      .replace(/{{product_3}}/g, 'Produit C').replace(/{{price_3}}/g, '50 000');
+  async sendMessage(number, text) {
+    if (!this.sock) throw new Error('Agent not connected');
+    const jid = number.includes('@s.whatsapp.net') ? number : `${number}@s.whatsapp.net`;
+    await this.sock.sendMessage(jid, { text });
   }
 
-  getRandom(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-  }
-
-  logConversation(from, message, response) {
-    const conv = { from, message, response, timestamp: new Date().toISOString() };
-    this.database.conversations.push(conv);
-    
-    if (!this.database.contacts.find(c => c.number === from)) {
-      this.database.contacts.push({ number: from, firstContact: new Date().toISOString(), status: 'new' });
+  async stop() {
+    if (this.sock) {
+      this.sock.end(new Error('Agent stopped'));
+      console.log('🛑 Agent WhatsApp arrêté.');
     }
-    
-    this.database.stats.totalConversations = (this.database.stats.totalConversations || 0) + 1;
-    fs.writeFileSync('database.json', JSON.stringify(this.database, null, 2));
-  }
-
-  getReport() {
-    const today = new Date().toDateString();
-    const todayConvs = this.database.conversations.filter(c => new Date(c.timestamp).toDateString() === today);
-    
-    return `
-╔═══════════════════════════════════╗
-║   📊 RAPPORT BantouMind AI        ║
-╠═══════════════════════════════════╣
-║ 📱 Conversations : ${String(this.database.stats.totalConversations || 0).padEnd(18)}║
-║ 👥 Contacts      : ${String(this.database.contacts.length).padEnd(18)}║
-║ 📈 Aujourd'hui   : ${String(todayConvs.length).padEnd(18)}║
-║ ✅ Statut        : ACTIF            ║
-║ ⏰ Uptime        : 24/7             ║
-╚═══════════════════════════════════╝`;
   }
 }
 
-// ===== Démarrage =====
-const agent = new WhatsAppAgent({
+// ===== START =====
+console.log('🚀 Démarrage de l\'agent WhatsApp BantouMind...\n');
+
+const bot = new BantouMindWhatsAppBot({
   botName: 'BantouMind Assistant',
-  businessName: 'Mon Business',
-  contactPhone: '+237 652 420 373',
-  businessHours: 'Lun-Sam: 8h-19h | Dim: 10h-14h'
+  businessName: 'BantouMind AI',
+  contactEmail: 'bantoumind.ai@gmail.com',
+  businessHours: 'Mon-Sat: 8AM-7PM | Sun: 10AM-2PM',
+  language: 'fr'
 });
 
-// Simulation d'interactions
-console.log('🤖 Agent prêt - En attente de messages...\n');
-console.log('📝 Exemple d\'interaction :');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('👤 Client: Bonjour');
-console.log(`🤖 Agent: ${agent.handleMessage('+225000000', 'Bonjour')}`);
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('\n📊 Rapport :');
-console.log(agent.getReport());
+bot.start();
 
-// Export pour intégration
-module.exports = WhatsAppAgent;
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('\n🛑 Arrêt...');
+  await bot.stop();
+  process.exit(0);
+});
+
+module.exports = BantouMindWhatsAppBot;

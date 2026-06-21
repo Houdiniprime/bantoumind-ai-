@@ -1,0 +1,13 @@
+{
+  "name": "bantoumind-content-agent",
+  "version": "2.0.0",
+  "description": "BantouMind AI - Content Creator Agent with real AI content via Google Gemini",
+  "main": "content-agent.js",
+  "scripts": {
+    "start": "node content-agent.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "dotenv": "^16.4.0"
+  }
+}
