@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BantouMind AI - AI Agents & Automations to boost your business. WhatsApp, content creation, lead generation, customer support.">
+  <title>BantouMind AI - Smart AI Agents for Your Business</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .lang-switch { display:flex; gap:4px; background:rgba(255,255,255,0.08); border-radius:8px; padding:3px; }
+    .lang-switch a { padding:6px 12px; border-radius:6px; color:var(--text-secondary); text-decoration:none; font-size:0.8rem; font-weight:600; transition:var(--transition); }
+    .lang-switch a.active { background:var(--gradient-main); color:white; }
+    .lang-switch a:hover:not(.active) { color:var(--text-primary); }
+    .stripe-badge { display:inline-flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(108,63,255,0.1); border:1px solid rgba(108,63,255,0.2); border-radius:8px; font-size:0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="loading-bar"></div>
+
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="/en/" class="nav-logo"><div class="nav-logo-icon">B</div><span>antouMind AI</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#agents">Agents</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><div class="lang-switch"><a href="../index.html">FR</a><a href="index.html" class="active">EN</a></div></li>
+        <li><a href="agents/bundle/bundle.html" class="nav-cta">🚀 Premium Bundle</a></li>
+      </ul>
+      <button class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-particles">
+      <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+      <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+      <div class="particle"></div><div class="particle"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        AI Agents That Work 24/7 — Anywhere in the World
+      </div>
+      <h1 class="hero-title">
+        <span class="hero-title-gradient">AI Agents</span> That<br>
+        Work For You <span class="hero-title-gradient">24/7</span>
+      </h1>
+      <p class="hero-subtitle">
+        Automate your business with intelligent agents: WhatsApp, content creation, 
+        lead generation, and customer support. <strong>Ready to use, zero technical skills required.</strong>
+      </p>
+      <div class="hero-actions">
+        <a href="#agents" class="btn btn-primary">🤖 Explore Our Agents</a>
+        <a href="#how-it-works" class="btn btn-secondary">How It Works?</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-number">100%</div><div class="hero-stat-label">Automated</div></div>
+        <div class="hero-stat"><div class="hero-stat-number">24/7</div><div class="hero-stat-label">Available</div></div>
+        <div class="hero-stat"><div class="hero-stat-number">0</div><div class="hero-stat-label">Skills Required</div></div>
+        <div class="hero-stat"><div class="hero-stat-number">💳</div><div class="hero-stat-label">Stripe + Crypto</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="agents" class="section">
+    <div class="section-header">
+      <div class="section-badge">🤖 Our Catalog</div>
+      <h2 class="section-title">AI Agents <span class="hero-title-gradient">Ready to Deploy</span></h2>
+      <p class="section-subtitle">Choose the agent that fits your needs. Installation and support included.</p>
+    </div>
+
+    <div class="agents-grid">
+      <div class="agent-card">
+        <div class="agent-card-icon icon-whatsapp">💬</div>
+        <h3 class="agent-card-title">WhatsApp Auto Agent</h3>
+        <p class="agent-card-desc">Automatically replies to customers on WhatsApp, takes orders, sends follow-ups, and qualifies leads 24/7.</p>
+        <ul class="agent-card-features">
+          <li>Instant auto-reply</li><li>Automated order taking</li>
+          <li>Follow-up messages</li><li>Lead qualification</li>
+          <li>Turnkey installation</li>
+        </ul>
+        <div class="agent-card-price">$59 <span>/ one-time</span></div>
+        <a href="../agents/whatsapp-bot/whatsapp-agent.html" class="agent-card-btn">View Details →</a>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-card-icon icon-content">✍️</div>
+        <h3 class="agent-card-title">Content Creator Agent</h3>
+        <p class="agent-card-desc">Automatically creates blog posts, social media content, product descriptions, and newsletters for your business.</p>
+        <ul class="agent-card-features">
+          <li>SEO blog articles</li><li>Social media posts</li>
+          <li>Product descriptions</li><li>Email newsletters</li>
+          <li>Auto editorial calendar</li>
+        </ul>
+        <div class="agent-card-price">$79 <span>/ one-time</span></div>
+        <a href="../agents/content-creator/content-agent.html" class="agent-card-btn">View Details →</a>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-card-icon icon-lead">🎯</div>
+        <h3 class="agent-card-title">Lead Generator Agent</h3>
+        <p class="agent-card-desc">Finds qualified prospects automatically, reaches out, and converts them into customers for your business.</p>
+        <ul class="agent-card-features">
+          <li>Targeted prospect search</li><li>Auto outreach messages</li>
+          <li>Automatic qualification</li><li>Built-in CRM</li>
+          <li>Daily reports</li>
+        </ul>
+        <div class="agent-card-price">$69 <span>/ one-time</span></div>
+        <a href="../agents/lead-generator/lead-agent.html" class="agent-card-btn">View Details →</a>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-card-icon icon-support">🎧</div>
+        <h3 class="agent-card-title">Customer Support Bot</h3>
+        <p class="agent-card-desc">Smart chatbot for your website or WhatsApp. Answers questions, solves problems, and escalates when needed.</p>
+        <ul class="agent-card-features">
+          <li>24/7 instant responses</li><li>Knowledge base included</li>
+          <li>Smart escalation</li><li>Multi-language</li>
+          <li>Conversation analytics</li>
+        </ul>
+        <div class="agent-card-price">$59 <span>/ one-time</span></div>
+        <a href="../agents/support-bot/support-agent.html" class="agent-card-btn">View Details →</a>
+      </div>
+
+      <div class="agent-card">
+        <div class="agent-card-icon icon-finance">💰</div>
+        <h3 class="agent-card-title">Finance & Accounting Agent</h3>
+        <p class="agent-card-desc">Automates invoice management, expense tracking, financial reports, and accounting for your business.</p>
+        <ul class="agent-card-features">
+          <li>Auto invoicing</li><li>Expense tracking</li>
+          <li>Financial reports</li><li>Payment alerts</li>
+          <li>Excel/PDF export</li>
+        </ul>
+        <div class="agent-card-price">$89 <span>/ one-time</span></div>
+        <a href="../agents/finance/finance-agent.html" class="agent-card-btn">View Details →</a>
+      </div>
+
+      <div class="agent-card" style="border-color: rgba(108,63,255,0.3); background: linear-gradient(180deg, rgba(108,63,255,0.08) 0%, var(--bg-card) 100%);">
+        <span class="badge-popular">🔥 Best Offer</span>
+        <div class="agent-card-icon icon-bundle">🚀</div>
+        <h3 class="agent-card-title">BantouMind Premium Bundle</h3>
+        <p class="agent-card-desc">All AI agents in one package. WhatsApp + Content + Leads + Support + Reseller License included.</p>
+        <ul class="agent-card-features">
+          <li>All 5 AI agents included</li><li>Step-by-step reseller guide</li>
+          <li>Reseller license included</li><li>Priority support</li>
+          <li>Lifetime updates</li>
+        </ul>
+        <div class="agent-card-price">$249 <span>/ one-time</span></div>
+        <a href="agents/bundle/bundle.html" class="agent-card-btn" style="background: var(--gradient-main);">🚀 Buy Bundle →</a>
+      </div>
+    </div>
+
+    <div class="commission-banner">
+      <div class="commission-banner-text">
+        <span class="commission-banner-icon">🔄</span>
+        <div>
+          <h3>Want to resell these agents?</h3>
+          <p>The Premium Bundle includes a full reseller license. Become a BantouMind AI reseller and keep 100% of your sales!</p>
+        </div>
+      </div>
+      <a href="agents/bundle/bundle.html" class="btn btn-secondary">Become a Reseller →</a>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="section" style="background: rgba(108,63,255,0.02); border-radius: var(--radius-lg); padding: 100px 24px;">
+    <div class="section-header">
+      <div class="section-badge">⚡ Simple & Fast</div>
+      <h2 class="section-title">How It <span class="hero-title-gradient">Works</span></h2>
+      <p class="section-subtitle">You buy, we install, you earn. It's that simple.</p>
+    </div>
+    <div class="steps" style="max-width: 1200px; margin: 0 auto;">
+      <div class="step"><div class="step-number">1</div><h3 class="step-title">Choose Your Agent</h3><p class="step-desc">Browse our catalog and pick the AI agent that fits your business needs.</p></div>
+      <div class="step"><div class="step-number">2</div><h3 class="step-title">Pay with Stripe</h3><p class="step-desc">Secure payment via Stripe (credit card) or cryptocurrency. No subscription, no hidden fees.</p></div>
+      <div class="step"><div class="step-number">3</div><h3 class="step-title">We Install for You</h3><p class="step-desc">Receive your ready-to-use agent with user guide and support.</p></div>
+      <div class="step"><div class="step-number">4</div><h3 class="step-title">Start Earning</h3><p class="step-desc">The agent works 24/7 for you. More customers, more sales, zero effort.</p></div>
+    </div>
+  </section>
+
+  <section id="pricing" class="section">
+    <div class="section-header">
+      <div class="section-badge">💰 Pricing</div>
+      <h2 class="section-title">Invest in Your <span class="hero-title-gradient">Success</span></h2>
+      <p class="section-subtitle">One-time payment. No subscription. Resellable.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-name">Single Agent</div>
+        <div class="pricing-price">$59</div>
+        <div class="pricing-period">one-time payment</div>
+        <ul class="pricing-features">
+          <li>1 AI agent of your choice</li><li>Free installation</li>
+          <li>User guide PDF</li><li>7-day support</li>
+          <li>1 month updates</li><li>Personal license</li>
+        </ul>
+        <a href="#agents" class="pricing-btn">Choose an Agent</a>
+      </div>
+
+      <div class="pricing-card featured">
+        <span class="badge-popular">🌟 Recommended</span>
+        <div class="pricing-name">Premium Bundle</div>
+        <div class="pricing-price">$249</div>
+        <div class="pricing-period">one-time payment</div>
+        <ul class="pricing-features">
+          <li>All 5 AI agents included</li><li>Priority installation</li>
+          <li>Full reseller guide</li><li>Reseller license included</li>
+          <li>30-day priority support</li><li>Lifetime updates</li>
+          <li>10 template pack</li><li>Private group access</li>
+        </ul>
+        <a href="agents/bundle/bundle.html" class="pricing-btn featured-btn">🚀 Buy Bundle</a>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pricing-name">Duo Pack</div>
+        <div class="pricing-price">$109</div>
+        <div class="pricing-period">one-time payment</div>
+        <ul class="pricing-features">
+          <li>2 AI agents of your choice</li><li>Free installation</li>
+          <li>User guides PDF</li><li>14-day support</li>
+          <li>3 months updates</li><li>Personal license</li>
+        </ul>
+        <a href="#agents" class="pricing-btn">Build My Pack</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background: rgba(108,63,255,0.02); border-radius: var(--radius-lg); padding: 100px 24px;">
+    <div class="section-header">
+      <div class="section-badge">💬 Testimonials</div>
+      <h2 class="section-title">Trusted by <span class="hero-title-gradient">Businesses Worldwide</span></h2>
+    </div>
+    <div class="testimonials-grid" style="max-width: 1200px; margin: 0 auto;">
+      <div class="testimonial-card">
+        <p class="testimonial-text">"Since I started using the WhatsApp Agent, I never lose a client. It even replies at night! My sales increased 40% in 2 weeks."</p>
+        <div class="testimonial-author"><div class="testimonial-avatar">AK</div><div><div class="testimonial-name">Aminata K.</div><div class="testimonial-role">Shop Owner, Senegal</div></div></div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">"The Content Creator Agent saves me hours every week. I post on 3 different platforms without lifting a finger. Amazing!"</p>
+        <div class="testimonial-author"><div class="testimonial-avatar">JD</div><div><div class="testimonial-name">James D.</div><div class="testimonial-role">Freelancer, UK</div></div></div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">"I bought the Premium Bundle and I'm already reselling it to my clients. Best investment of the year!"</p>
+        <div class="testimonial-author"><div class="testimonial-avatar">SM</div><div><div class="testimonial-name">Sarah M.</div><div class="testimonial-role">Reseller, USA</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div class="section-badge">❓ FAQ</div>
+      <h2 class="section-title">Frequently Asked <span class="hero-title-gradient">Questions</span></h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item active">
+        <div class="faq-question" onclick="toggleFaq(this)">What is an AI agent?<span class="faq-question-icon">+</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">An AI agent is an intelligent program that works automatically for you. It can reply to customers, create content, find prospects, and more, 24/7, without human intervention.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Do I need technical skills?<span class="faq-question-icon">+</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">No! Zero technical skills required. Our agents are ready to use. We install everything and train you in 30 minutes.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">How do I pay?<span class="faq-question-icon">+</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">Payment via <strong>Stripe</strong> (credit/debit card) or <strong>Cryptocurrency</strong>. Contact us, make the payment, and receive your agent immediately after confirmation.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Can I resell these agents?<span class="faq-question-icon">+</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">Yes! The <strong>Premium Bundle</strong> includes a full reseller license. Buy once and resell to as many clients as you want.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">How long does installation take?<span class="faq-question-icon">+</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">Installation takes 24-48 hours after payment confirmation. The bundle comes with a step-by-step guide for immediate setup.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Can I buy from anywhere in the world?<span class="faq-question-icon">+</span></div>
+        <div class="faq-answer"><div class="faq-answer-inner">Absolutely! BantouMind AI is available worldwide. Pay with Stripe (any country) or cryptocurrency.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="cta-section">
+      <h2 class="cta-title">Ready to <span class="hero-title-gradient">Automate</span> Your Business?</h2>
+      <p class="cta-subtitle">Contact us via WhatsApp or email to order your AI agent right now.</p>
+      <div style="margin-top:16px;">
+        <div class="stripe-badge">💳 Secure payment via Stripe (credit/debit card)</div>
+      </div>
+      <div class="contact-info">
+        <div class="contact-item"><span class="contact-item-icon">💬</span><span><strong>WhatsApp:</strong> Contact us</span></div>
+        <div class="contact-item"><span class="contact-item-icon">📧</span><span><strong>Email:</strong> bantoumind.ai@gmail.com</span></div>
+        <div class="contact-item"><span class="contact-item-icon">💳</span><span><strong>Stripe:</strong> Credit card, Visa, Mastercard</span></div>
+      </div>
+      <div class="payment-methods" style="margin-top: 24px;">
+        <span class="payment-method">💳 Stripe (Cards)</span>
+        <span class="payment-method">₿ Crypto (BTC/ETH/USDT)</span>
+        <span class="payment-method">💵 PayPal</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div><div style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:1.2rem;"><div style="width:36px;height:36px;background:var(--gradient-main);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;">B</div> BantouMind AI</div><p class="footer-brand-desc">AI Agents and automations to boost your business worldwide. WhatsApp, content, leads, support - all automated.</p></div>
+      <div class="footer-column"><h4>Products</h4><ul><li><a href="../agents/whatsapp-bot/whatsapp-agent.html">WhatsApp Agent</a></li><li><a href="../agents/content-creator/content-agent.html">Content Agent</a></li><li><a href="../agents/lead-generator/lead-agent.html">Lead Agent</a></li><li><a href="agents/bundle/bundle.html">Premium Bundle</a></li></ul></div>
+      <div class="footer-column"><h4>Resources</h4><ul><li><a href="../docs/guides/guide-revente.html">Reseller Guide</a></li><li><a href="../docs/guides/installation.html">Installation Guide</a></li></ul></div>
+      <div class="footer-column"><h4>Contact</h4><ul><li><a href="#">Stripe Payment</a></li><li><a href="#">WhatsApp</a></li><li><a href="#">bantoumind.ai@gmail.com</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2025 BantouMind AI. All rights reserved.</p><p>Made with ❤️ for the world</p></div>
+  </footer>
+  <script>
+// Mobile Menu
+const mobileBtn = document.querySelector('.mobile-menu-btn');
+const navLinks = document.getElementById('navLinks');
+if(mobileBtn) mobileBtn.addEventListener('click', () => { navLinks.classList.toggle('open'); mobileBtn.textContent = navLinks.classList.contains('open') ? '✕' : '☰'; });
+
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 50); });
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', function(e) {
+    const t = document.querySelector(this.getAttribute('href'));
+    if(t) { e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+
+function toggleFaq(el) { el.parentElement.classList.toggle('active'); }
+
+// Intersection Observer for animations
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }});
+}, {threshold:0.1});
+document.querySelectorAll('.agent-card, .pricing-card, .step, .testimonial-card').forEach(el => {
+  el.style.opacity='0'; el.style.transform='translateY(20px)'; el.style.transition='all 0.6s ease'; obs.observe(el);
+});
+
+function showStripePayment(product, amount) {
+  alert(`💳 Pay $${amount} for ${product} via Stripe\n\nContact bantoumind.ai@gmail.com for a secure payment link.`);
+}
+
+console.log('🚀 BantouMind AI - International');
+</script>
+</body>
+</html>
