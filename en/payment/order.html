@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    .lang-switch { display:flex; gap:4px; background:rgba(255,255,255,0.08); border-radius:8px; padding:3px; }
+    .lang-switch a { padding:6px 12px; border-radius:6px; color:var(--text-secondary); text-decoration:none; font-size:0.8rem; font-weight:600; transition:var(--transition); }
+    .lang-switch a.active { background:var(--gradient-main); color:white; }
+    .lang-switch a:hover:not(.active) { color:var(--text-primary); }
     .order-page { padding-top: 120px; max-width: 800px; margin: 0 auto; }
     .order-card { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.06); padding: 40px; margin-bottom: 24px; }
     .order-card h2 { margin-bottom: 24px; }
@@ -53,6 +57,20 @@
     <div class="order-card">
       <h2>🌍 Order Your AI Agent</h2>
       <p style="color:var(--text-secondary);margin-bottom:24px;">Secure payment via <strong>Chariow</strong> — Credit card, Mobile Money, or Crypto accepted.</p>
+      <div style="background:rgba(108,63,255,0.08);border:1px solid rgba(108,63,255,0.15);border-radius:12px;padding:20px;margin-bottom:24px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <span style="font-size:1.5rem;">🛡️</span>
+          <div>
+            <strong style="font-size:1rem;">How it works:</strong>
+            <ol style="color:var(--text-secondary);font-size:0.9rem;margin-top:8px;line-height:1.8;padding-left:20px;">
+              <li>Fill in your details below</li>
+              <li>We send you a <strong>secure Chariow payment link</strong> via WhatsApp/email</li>
+              <li>Click the link and pay securely on Chariow <em>(cards, Mobile Money, or crypto)</em></li>
+              <li>We install your agent within 24-48h</li>
+            </ol>
+          </div>
+        </div>
+      </div>
       
       <div class="form-group">
         <label>Select Product</label>
@@ -168,20 +186,8 @@
 
     function processPayment(slug) {
       const product = products[slug] || products.bundle;
-      alert(`🌍 Chariow Payment\n\nProduct: ${product.name}\nAmount: $${product.price}\n\nYou will be redirected to Chariow's secure payment page to complete your purchase.\n\nAfter payment, we will contact you within 24h to install your agent.`);
-      
-      // Redirect to Chariow checkout (remplace par ton vrai lien Chariow)
-      const chariowLinks = {
-        whatsapp: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20WhatsApp%20Agent%20($59)',
-        content: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Content%20Agent%20($79)',
-        lead: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Lead%20Agent%20($69)',
-        support: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Support%20Bot%20($59)',
-        finance: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Finance%20Agent%20($89)',
-        duo: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Duo%20Pack%20($109)',
-        bundle: 'https://wa.me/237652420373?text=Chariow%20Payment%20-%20Premium%20Bundle%20($249)'
-      };
-      // Redirect to WhatsApp for now (Chariow checkout URL goes here when API is configured)
-      window.open(chariowLinks[slug] || chariowLinks.bundle, '_blank');
+      const msg = encodeURIComponent(`Order: ${product.name} ($${product.price})\n\nHi! I want to buy the ${product.name} for $${product.price}. Please send me the secure Chariow payment link.`);
+      window.open(`https://wa.me/237652420373?text=${msg}`, '_blank');
     }
 
     // Initial load
