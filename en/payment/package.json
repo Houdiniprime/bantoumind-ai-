@@ -1,0 +1,17 @@
+{
+  "name": "bantoumind-chariow-payment",
+  "version": "1.0.0",
+  "description": "BantouMind AI - Chariow Payment Integration",
+  "main": "chariow-payment.js",
+  "scripts": {
+    "generate-all": "node chariow-payment.js --all",
+    "generate-bundle": "node chariow-payment.js bundle",
+    "start": "node chariow-payment.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
