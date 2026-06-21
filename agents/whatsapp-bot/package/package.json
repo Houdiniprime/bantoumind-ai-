@@ -1,0 +1,14 @@
+{
+  "name": "bantoumind-whatsapp-agent",
+  "version": "1.0.0",
+  "description": "Agent WhatsApp Automatique BantouMind AI - Répond, qualifie et convertit automatiquement",
+  "main": "agent.js",
+  "scripts": {
+    "start": "node agent.js",
+    "test": "node test.js"
+  },
+  "keywords": ["whatsapp", "bot", "ai", "automation", "bantoumind"],
+  "author": "BantouMind AI",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {}
+}

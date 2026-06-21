@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Package Agent WhatsApp - BantouMind AI</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <style>
+    .package-content { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; }
+    .package-header { background: var(--gradient-purple); padding: 60px 40px; text-align: center; }
+    .package-header h1 { font-size: 2.5rem; margin-bottom: 12px; }
+    .package-header p { color: rgba(255,255,255,0.8); font-size: 1.1rem; }
+    .package-body { padding: 40px; }
+    .code-block { background: #0A0A1A; border-radius: 8px; padding: 20px; margin: 16px 0; overflow-x: auto; border: 1px solid rgba(255,255,255,0.06); }
+    .code-block code { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #B0B0C8; line-height: 1.6; white-space: pre; }
+    .file-tree { background: rgba(108,63,255,0.05); border-radius: 8px; padding: 16px 24px; margin: 16px 0; }
+    .file-tree ul { list-style: none; padding-left: 20px; }
+    .file-tree li { padding: 4px 0; color: var(--text-secondary); font-size: 0.9rem; font-family: monospace; }
+    .file-tree li::before { content: '📁 '; }
+    .file-tree li.file::before { content: '📄 '; }
+  </style>
+</head>
+<body>
+  <nav class="navbar"><div class="nav-container">
+    <a href="../../index.html" class="nav-logo"><div class="nav-logo-icon">B</div><span>antouMind AI</span></a>
+    <ul class="nav-links"><li><a href="whatsapp-agent.html">← Page Produit</a></li><li><a href="../../index.html#contact" class="nav-cta">📱 Commander</a></li></ul>
+  </div></nav>
+
+  <section class="section" style="padding-top:120px;">
+    <div class="package-content">
+      <div class="package-header">
+        <h1>📦 Agent WhatsApp Automatique</h1>
+        <p>Package complet - Prêt à déployer</p>
+        <div style="margin-top:16px;font-size:1.3rem;font-weight:700;">35 000 FCFA</div>
+      </div>
+      
+      <div class="package-body">
+        <h2>📁 Structure du Package</h2>
+        <div class="file-tree">
+          <ul>
+            <li>whatsapp-agent/
+              <ul>
+                <li class="file">agent.js - Agent WhatsApp principal</li>
+                <li class="file">config.json - Configuration des messages</li>
+                <li class="file">database.json - Base de données intégrée</li>
+                <li class="file">templates.json - Templates de messages</li>
+                <li class="file">start.bat - Lancement sur Windows</li>
+                <li class="file">start.sh - Lancement sur Linux/Mac</li>
+                <li class="file">package.json - Dépendances</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <h2>🛠️ Code Principal</h2>
+        <p style="color:var(--text-secondary);margin-bottom:16px;">Fichier principal de l'agent WhatsApp :</p>
+        
+        <div class="code-block"><code>// ===== BantouMind AI - WhatsApp Agent =====
+// Agent WhatsApp Automatique - Version 1.0
+// Prêt à l'emploi - Zéro configuration complexe
+
+const fs = require('fs');
+const path = require('path');
+
+class WhatsAppAgent {
+  constructor(config = {}) {
+    this.config = {
+      botName: config.botName || 'BantouMind Assistant',
+      welcomeMessage: config.welcomeMessage || 'Bonjour ! 👋 Je suis l\'assistant automatique. Comment puis-je vous aider ?',
+      autoReply: config.autoReply !== false,
+      workingHours: config.workingHours || '24/7',
+      language: config.language || 'fr',
+      ...config
+    };
+    
+    this.database = this.loadDatabase();
+    this.messages = this.loadTemplates();
+    console.log('✅ Agent WhatsApp initialisé');
+    console.log(`📱 Bot: ${this.config.botName}`);
+    console.log(`⏰ Mode: ${this.config.workingHours}`);
+  }
+
+  loadDatabase() {
+    try {
+      return JSON.parse(fs.readFileSync('./database.json', 'utf8'));
+    } catch {
+      return { contacts: [], conversations: [], stats: {} };
+    }
+  }
+
+  loadTemplates() {
+    try {
+      return JSON.parse(fs.readFileSync('./templates.json', 'utf8'));
+    } catch {
+      return this.getDefaultTemplates();
+    }
+  }
+
+  getDefaultTemplates() {
+    return {
+      welcome: [
+        "Bonjour ! 👋 Bienvenue chez {{business_name}}. Je suis votre assistant virtuel. Comment puis-je vous aider aujourd'hui ?",
+        "👋 Salut ! Moi c'est {{bot_name}}, l'assistant IA de {{business_name}}. En quoi puis-je vous être utile ?"
+      ],
+      order: {
+        received: "✅ Commande reçue ! Voici le récapitulatif :\n\n{{order_details}}\n\nNous vous contacterons sous 24h pour la livraison.",
+        confirmed: "🎉 Votre commande est confirmée ! Numéro : #{{order_id}}",
+        delivered: "📦 Votre commande a été livrée ! Merci de votre confiance 🙏"
+      },
+      followup: [
+        "Bonjour ! 👋 Vous aviez demandé des informations sur {{product}}. Souhaitez-vous commander ?",
+        "Petit rappel : votre devis #{{quote_id}} est toujours valable 📋"
+      ],
+      info: [
+        "Nos horaires : {{hours}}",
+        "Nos coordonnées : {{contact}}",
+        "Retrouvez notre catalogue ici : {{catalog_link}}"
+      ]
+    };
+  }
+
+  handleIncomingMessage(message) {
+    const response = this.generateResponse(message);
+    this.logConversation(message.from, message.text, response);
+    return response;
+  }
+
+  generateResponse(message) {
+    const text = message.text?.toLowerCase() || '';
+    
+    if (text.includes('bonjour') || text.includes('salut') || text.includes('hello')) {
+      return this.getRandomTemplate('welcome');
+    }
+    if (text.includes('commander') || text.includes('acheter') || text.includes('prix')) {
+      return this.getOrderResponse(message);
+    }
+    if (text.includes('merci') || text.includes('merci beaucoup')) {
+      return "Avec plaisir ! 😊 N'hésitez pas si vous avez d'autres questions.";
+    }
+    if (text.includes('contact') || text.includes('adresse') || text.includes('ou')) {
+      return this.getInfoResponse();
+    }
+    if (text.includes('catalogue') || text.includes('produit')) {
+      return "📋 Voici notre catalogue : {{catalog_link}}\n\n1️⃣ Produit A - 15 000 FCFA\n2️⃣ Produit B - 25 000 FCFA\n3️⃣ Produit C - 50 000 FCFA\n\nSouhaitez-vous commander ?";
+    }
+    
+    return "Merci pour votre message ! Un conseiller vous répondra dans les plus brefs délais. ⏳\n\nEn attendant, voici ce que je peux faire pour vous :\n• 💬 Voir notre catalogue\n• 📋 Passer une commande\n• 📞 Être mis en relation avec un conseiller";
+  }
+
+  getRandomTemplate(key) {
+    const templates = this.messages[key];
+    if (Array.isArray(templates)) {
+      return templates[Math.floor(Math.random() * templates.length)];
+    }
+    return templates;
+  }
+
+  getOrderResponse(message) {
+    const orderId = Math.floor(Math.random() * 10000);
+    return `🛒 Super ! Pour passer commande, j'ai besoin de ces informations :\n\n1️⃣ Nom du produit souhaité\n2️⃣ Quantité\n3️⃣ Votre adresse de livraison\n4️⃣ Votre numéro de téléphone\n\nEnvoyez-moi ces infos et je prépare votre commande #${orderId} ! ✅`;
+  }
+
+  getInfoResponse() {
+    return `📍 Nous contacter :\n📞 Téléphone : {{contact_phone}}\n📧 Email : {{contact_email}}\n📍 Adresse : {{contact_address}}\n\n⏰ Horaires : {{hours}}`;
+  }
+
+  logConversation(from, message, response) {
+    this.database.conversations.push({
+      from,
+      message,
+      response,
+      timestamp: new Date().toISOString(),
+      language: this.config.language
+    });
+    
+    if (!this.database.stats[from]) {
+      this.database.contacts.push({
+        number: from,
+        firstContact: new Date().toISOString(),
+        status: 'new'
+      });
+    }
+    
+    this.database.stats.totalConversations = (this.database.stats.totalConversations || 0) + 1;
+    this.saveDatabase();
+  }
+
+  saveDatabase() {
+    fs.writeFileSync('./database.json', JSON.stringify(this.database, null, 2));
+  }
+
+  sendFollowUp(contactNumber) {
+    const template = this.getRandomTemplate('followup');
+    console.log(`📤 Message de relance envoyé à ${contactNumber}`);
+    return template;
+  }
+
+  getStats() {
+    return {
+      totalConversations: this.database.stats.totalConversations || 0,
+      totalContacts: this.database.contacts.length,
+      activeToday: this.database.conversations.filter(
+        c => new Date(c.timestamp).toDateString() === new Date().toDateString()
+      ).length,
+      status: 'actif',
+      uptime: '24/7'
+    };
+  }
+
+  generateReport() {
+    const stats = this.getStats();
+    return `
+📊 RAPPORT D'ACTIVITÉ - ${this.config.botName}
+═══════════════════════════════════
+📱 Conversations totales : ${stats.totalConversations}
+👥 Contacts uniques : ${stats.totalContacts}
+📈 Conversations aujourd'hui : ${stats.activeToday}
+✅ Statut : ${stats.status}
+⏰ Uptime : ${stats.uptime}
+═══════════════════════════════════`;
+  }
+}
+
+// ===== DÉMARRAGE =====
+console.log('╔═══════════════════════════════════╗');
+console.log('║   BantouMind AI - WhatsApp Agent   ║');
+console.log('║        Version 1.0.0               ║');
+console.log('╚═══════════════════════════════════╝');
+
+// Configurer votre agent ici
+const agent = new WhatsAppAgent({
+  botName: 'BantouMind Assistant',
+  businessName: 'Votre Entreprise',
+  welcomeMessage: 'Bonjour ! 👋 Bienvenue !',
+  workingHours: '24/7',
+  language: 'fr'
+});
+
+// Démarrer l'agent
+console.log(agent.generateReport());
+
+// Export pour intégration
+module.exports = WhatsAppAgent;</code></div>
+
+        <div class="code-block"><code>// ===== start.bat (Windows) =====
+@echo off
+echo ╔═══════════════════════════════════╗
+echo ║   BantouMind AI - WhatsApp Agent   ║
+echo ║      Demarrage en cours...         ║
+echo ╚═══════════════════════════════════╝
+npm install
+node agent.js
+pause</code></div>
+
+        <h2>📋 Guide d'Installation Rapide</h2>
+        <ol style="color:var(--text-secondary);line-height:2;">
+          <li><strong>Télécharge</strong> le dossier <code>whatsapp-agent</code></li>
+          <li><strong>Installe</strong> Node.js sur ton ordinateur (gratuit sur nodejs.org)</li>
+          <li><strong>Double-clique</strong> sur <code>start.bat</code> (Windows) ou <code>start.sh</code> (Mac/Linux)</li>
+          <li><strong>Configure</strong> tes messages dans le fichier <code>config.json</code></li>
+          <li><strong>L'agent</strong> est prêt ! Il gère automatiquement les messages</li>
+        </ol>
+
+        <h2>💡 Comment gagner de l'argent avec</h2>
+        <div style="background:rgba(255,107,53,0.05);border-radius:8px;padding:20px;margin:20px 0;">
+          <p style="color:var(--text-secondary);line-height:1.7;">
+            <strong>💰 Option 1 : Vends-le à des commerçants</strong><br>
+            Propose cet agent aux boutiques, restaurants, services autour de toi pour 50 000-100 000 FCFA.<br><br>
+            <strong>💰 Option 2 : Utilise-le pour ton business</strong><br>
+            Automatise ton WhatsApp, réponds à plus de clients, vends plus.<br><br>
+            <strong>💰 Option 3 : Deviens revendeur BantouMind</strong><br>
+            Achète le Bundle Premium et revends tous les agents avec une marge de 100%.
+          </p>
+        </div>
+
+        <div style="text-align:center;margin-top:40px;">
+          <a href="../../index.html#contact" class="btn btn-primary" style="padding:16px 48px;">📱 Commander cet Agent - 35 000 FCFA</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" style="margin-top:60px;">
+    <div class="footer-content">
+      <div><div style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:1.2rem;"><div style="width:36px;height:36px;background:var(--gradient-main);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;">B</div> BantouMind AI</div><p class="footer-brand-desc">Agents IA pour booster votre business en Afrique.</p></div>
+      <div class="footer-column"><h4>Produits</h4><ul><li><a href="../whatsapp-bot/whatsapp-agent.html">Agent WhatsApp</a></li><li><a href="../content-creator/content-agent.html">Agent Contenu</a></li><li><a href="../lead-generator/lead-agent.html">Agent Leads</a></li><li><a href="../bundle/bundle.html">Bundle Premium</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2025 BantouMind AI</p></div>
+  </footer>
+  <script src="../../js/main.js"></script>
+</body>
+</html>

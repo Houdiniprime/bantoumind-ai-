@@ -1,0 +1,13 @@
+{
+  "name": "bantoumind-ai",
+  "version": "1.0.0",
+  "description": "BantouMind AI - Agents Intelligents pour l'Afrique. Automatisation WhatsApp, Contenu, Leads, Support Client.",
+  "main": "index.html",
+  "scripts": {
+    "start": "start index.html",
+    "agents": "node agents/bundle/package/bundle-setup.js"
+  },
+  "keywords": ["ai", "whatsapp", "automation", "africa", "bantoumind"],
+  "author": "BantouMind AI",
+  "license": "SEE LICENSE IN LICENSE.txt"
+}

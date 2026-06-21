@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Guide d'Installation - BantouMind AI</title><link rel="stylesheet" href="../../css/style.css">
+<style>
+  .install-step { background: var(--bg-card); border-radius: var(--radius); padding: 24px; margin: 16px 0; border: 1px solid rgba(255,255,255,0.06); display: flex; gap: 16px; }
+  .install-step-icon { font-size: 2rem; width: 60px; text-align: center; }
+  .code-block { background: #0A0A1A; border-radius: 8px; padding: 16px; margin: 12px 0; font-family: monospace; color: #B0B0C8; border: 1px solid rgba(255,255,255,0.06); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+  <nav class="navbar"><div class="nav-container">
+    <a href="../../index.html" class="nav-logo"><div class="nav-logo-icon">B</div><span>antouMind AI</span></a>
+    <ul class="nav-links"><li><a href="../../index.html">Accueil</a></li><li><a href="guide-revente.html">Guide Revente</a></li></ul>
+  </div></nav>
+  <section style="padding:120px 24px 60px; max-width:800px; margin:0 auto;">
+    <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:16px;">📖 Guide d'Installation</h1>
+    <p style="color:var(--text-secondary);margin-bottom:40px;">Installe tes agents BantouMind AI en quelques minutes.</p>
+
+    <h2>🔧 Prérequis</h2>
+    <div class="install-step"><span class="install-step-icon">💻</span><div><strong>Un ordinateur (Windows, Mac ou Linux)</strong><br><span style="color:var(--text-secondary);font-size:0.9rem;">N'importe quel PC fait l'affaire</span></div></div>
+    <div class="install-step"><span class="install-step-icon">📦</span><div><strong>Node.js (gratuit)</strong><br><span style="color:var(--text-secondary);font-size:0.9rem;">Télécharge sur nodejs.org (version 16 ou +)</span></div></div>
+    <div class="install-step"><span class="install-step-icon">📱</span><div><strong>Un numéro WhatsApp ou un site web</strong><br><span style="color:var(--text-secondary);font-size:0.9rem;">Pour utiliser les agents</span></div></div>
+
+    <h2 style="margin-top:40px;">📥 Installation Rapide</h2>
+    <div class="install-step"><span class="install-step-icon">1️⃣</span><div><strong>Télécharge le dossier</strong><br><span style="color:var(--text-secondary);font-size:0.9rem;">Tu reçois le dossier complet par email après paiement</span></div></div>
+    <div class="install-step"><span class="install-step-icon">2️⃣</span><div><strong>Double-clique sur start.bat</strong><br><span style="color:var(--text-secondary);font-size:0.9rem;">L'installation se lance automatiquement</span></div></div>
+    <div class="install-step"><span class="install-step-icon">3️⃣</span><div><strong>Ouvre index.html</strong><br><span style="color:var(--text-secondary);font-size:0.9rem;">La plateforme est prête !</span></div></div>
+
+    <h2 style="margin-top:40px;">⚙️ Configurer un Agent</h2>
+    <p>Ouvre le fichier de configuration de l'agent (config.json ou agent.js) et modifie :</p>
+    <div class="code-block">
+// Exemple de configuration WhatsApp Agent
+{
+  "botName": "Mon Assistant",
+  "businessName": "Ma Boutique",
+  "contactPhone": "+225 01 02 03 04 05",
+  "businessHours": "Lun-Sam: 8h-19h",
+  "language": "fr"
+}
+    </div>
+
+    <h2 style="margin-top:40px;">❓ Besoin d'aide ?</h2>
+    <p style="color:var(--text-secondary);">Contacte-nous pour une installation assistée gratuite.</p>
+    <a href="../../index.html#contact" class="btn btn-primary" style="margin-top:12px;">📱 Nous contacter</a>
+  </section>
+  <footer class="footer">[...]</footer>
+</body>
+</html>

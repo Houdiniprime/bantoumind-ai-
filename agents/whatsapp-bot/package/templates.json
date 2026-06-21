@@ -1,0 +1,19 @@
+{
+  "welcome": [
+    "Bonjour ! 👋 Bienvenue chez {{business_name}}. Je suis {{bot_name}}, votre assistant virtuel. Comment puis-je vous aider aujourd'hui ?",
+    "👋 Salut ! Moi c'est {{bot_name}}, l'assistant IA de {{business_name}}. En quoi puis-je vous être utile ?",
+    "Bienvenue sur {{business_name}} ! 🎉 Je suis là pour vous assister. Que puis-je faire pour vous ?"
+  ],
+  "catalog": "📋 Voici notre catalogue :\n\n1️⃣ {{product_1}} - {{price_1}} FCFA\n2️⃣ {{product_2}} - {{price_2}} FCFA\n3️⃣ {{product_3}} - {{price_3}} FCFA\n\nSouhaitez-vous commander ? 🛒",
+  "order": {
+    "request": "🛒 Super ! Pour passer commande, j'ai besoin de :\n\n1️⃣ Nom du produit\n2️⃣ Quantité\n3️⃣ Adresse de livraison\n4️⃣ Téléphone\n\nEnvoyez ces infos ✅",
+    "confirm": "✅ Commande #{{order_id}} reçue ! Récapitulatif :\n\n{{order_details}}\n\n📞 Nous vous contacterons sous 24h.",
+    "delivery": "📦 Votre commande #{{order_id}} a été livrée ! Merci pour votre confiance 🙏"
+  },
+  "followup": [
+    "Bonjour ! 👋 Vous aviez demandé des infos. Souhaitez-vous commander maintenant ?",
+    "Petit rappel : {{business_name}} est là pour vous servir ! 📋",
+    "Offre spéciale ! -10% sur votre première commande 🎉"
+  ],
+  "info": "📍 Contact :\n📞 {{contact_phone}}\n📧 {{contact_email}}\n⏰ {{business_hours}}"
+}
